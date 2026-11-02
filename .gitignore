@@ -8,3 +8,6 @@ test-results/
 tmp/
 .DS_Store
 *.log
+
+# Contexto local de sesiones; no publicar en GitHub.
+/LOG_SESSION.md
