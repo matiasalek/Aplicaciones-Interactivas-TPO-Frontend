@@ -32,10 +32,19 @@ Si PostgreSQL o la API están detenidos, las pantallas muestran un error con la 
 - Registro, inicio y cierre de sesión, recuperación y restablecimiento de contraseña.
 - Rutas administrativas protegidas y recuperación del destino solicitado al iniciar sesión.
 - CRUD de productos y categorías, activación/desactivación y gestión de consultas.
+- Dashboard en Administración → Resumen: totales de productos, visibilidad, disponibilidad, categorías y consultas por estado, con actualización manual.
 - Edición de información institucional y datos personales del administrador.
 - Validaciones locales alineadas con los contratos del backend, estados de carga, errores y confirmaciones de eliminación.
 
 La identidad visual es Pixel Forge Componentes; el nombre institucional y los datos publicados se gestionan en Administración → Información del comercio.
+
+## Dashboard administrativo
+
+El Resumen muestra métricas reales del estado actual del comercio. La disponibilidad y las categorías incluyen productos activos e inactivos. Las barras muestran cantidad y porcentaje sobre el total de productos o consultas, según corresponda; los porcentajes se redondean a enteros y pueden no sumar exactamente 100 %.
+
+Se carga al entrar y se vuelve a consultar con **Actualizar**. Incluye la fecha de última actualización, estados vacíos y reintento ante errores. Los accesos de gestión siguen disponibles si falla la carga. No agrega dependencias ni requiere cambios al backend.
+
+Las métricas describen el estado actual, sin historial ni actualización en tiempo real. Las consultas se cuentan con los totales filtrados de la API; los productos se recorren en páginas de hasta 100. Las solicitudes no forman una transacción única: si se modifica el catálogo durante la lectura y se detectan cambios de total o productos repetidos, se pide reintentar.
 
 ## Primera demostración
 

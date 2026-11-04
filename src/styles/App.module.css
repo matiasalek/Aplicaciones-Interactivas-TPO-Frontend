@@ -1278,32 +1278,109 @@
 .adminMain .pageHeading .eyebrow {
   font-size: 9px;
 }
-.adminWelcome {
-  background: #edf2e3;
-  border: 1px solid #e0e8d2;
-  padding: 34px;
-  border-radius: 8px;
+.dashboard {
+  margin-bottom: 30px;
+}
+.dashboardHeading {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 40px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
-.adminWelcome h2 {
-  font-size: 29px;
-  line-height: 1.25;
-  margin-bottom: 16px;
+.dashboardHeading h2 {
+  font-size: 22px;
+  margin: 0 0 8px;
 }
-.adminWelcome .eyebrow {
-  font-size: 9px;
-}
-.adminWelcome p:not(.eyebrow) {
+.dashboardHeading p,
+.dashboardPanel > p,
+.dashboardUpdated {
   color: #59694d;
   font-size: 12px;
-  max-width: 470px;
-  margin-bottom: 0;
 }
-.adminWelcome > svg {
+.dashboardHeading p {
+  margin: 0;
+}
+.dashboardUpdated {
+  margin: 16px 0;
+}
+.dashboardMetrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0 0 20px;
+}
+.dashboardMetrics > div {
+  background: #edf2e3;
+  border: 1px solid #e0e8d2;
+  padding: 22px;
+  border-radius: 8px;
+}
+.dashboardMetrics dt {
   color: #59694d;
+  font-size: 12px;
+}
+.dashboardMetrics dd {
+  font-size: 32px;
+  font-weight: 600;
+  margin: 10px 0 0;
+  line-height: 1.2;
+}
+.dashboardDistributions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 18px;
+}
+.dashboardPanel {
+  background: #fff;
+  padding: 24px;
+  border: 1px solid #e2e7d8;
+  border-radius: 8px;
+  min-width: 0;
+}
+.dashboardPanel:last-child {
+  grid-column: 1 / -1;
+}
+.dashboardPanel h3 {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+.dashboardBars {
+  list-style: none;
+  padding: 0;
+  margin: 22px 0 0;
+  display: grid;
+  gap: 18px;
+}
+.dashboardBarLabel {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.dashboardBarLabel > span:first-child {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.dashboardBarLabel > span:last-child {
+  white-space: nowrap;
+  color: #59694d;
+}
+.dashboardTrack {
+  background: #edf2e3;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 7px;
+}
+.dashboardTrack > div {
+  height: 100%;
+  background: #667d4b;
+  border-radius: inherit;
+}
+.dashboardEmpty {
+  padding: 12px 0;
 }
 .adminCards {
   display: grid;
@@ -2133,14 +2210,17 @@
   .adminMain .pageHeading h1 {
     font-size: 29px;
   }
-  .adminWelcome {
-    padding: 23px;
+  .dashboardMetrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .adminWelcome > svg {
-    display: none;
+  .dashboardMetrics > div {
+    padding: 18px;
   }
-  .adminWelcome h2 {
-    font-size: 25px;
+  .dashboardDistributions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dashboardPanel {
+    padding: 20px;
   }
   .adminCards {
     gap: 12px;

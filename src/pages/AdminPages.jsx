@@ -21,6 +21,7 @@ import {
 } from "react-router";
 import { useAuth } from "../context/AuthContext";
 import { AvailabilityBadge } from "../components/ProductCard";
+import { Dashboard } from "../components/Dashboard";
 import {
   ArrowLink,
   BackLink,
@@ -93,21 +94,7 @@ export function AdminHomePage() {
           </ButtonLink>
         }
       />
-      <div className={s.adminWelcome}>
-        <div>
-          <p className={s.eyebrow}>UN CATÁLOGO AL DÍA HACE LA DIFERENCIA</p>
-          <h2>
-            Las buenas experiencias
-            <br />
-            empiezan por los detalles.
-          </h2>
-          <p>
-            Revisá la disponibilidad, mantené la información clara y respondé
-            las consultas recibidas.
-          </p>
-        </div>
-        <Box size={105} strokeWidth={0.8} />
-      </div>
+      <Dashboard />
       <div className={s.adminCards}>
         {cards.map(([path, Icon, title, description]) => (
           <Link key={path} to={`/admin/${path}`} className={s.adminCard}>

@@ -25,6 +25,16 @@ Iniciar la API y PostgreSQL, ejecutar `npm run dev` y abrir http://127.0.0.1:517
 10. Abrir una consulta y marcarla como leída, respondida y pendiente. Verificar los filtros y eliminarla con confirmación.
 11. Cerrar sesión: volver a abrir una ruta privada y comprobar que requiere acceso.
 
+## Dashboard administrativo
+
+1. Abrir Administración → Resumen. Comprobar carga, fecha de actualización, cuatro tarjetas y distribuciones de disponibilidad, consultas y categorías.
+2. Comparar productos activos e inactivos con los listados; su suma debe coincidir con el total. La disponibilidad y las categorías también incluyen los inactivos.
+3. Cambiar la visibilidad o disponibilidad de un producto en otra pestaña. Pulsar Actualizar y comprobar los nuevos conteos sin recargar la página.
+4. Enviar una consulta desde Contacto; verificar que aumentan las pendientes y el total al actualizar. Cambiar su estado y repetir.
+5. Crear una categoría vacía: debe aparecer con cero productos. Sin productos o consultas, deben mostrarse ceros y mensajes vacíos, sin porcentajes inválidos.
+6. Detener la API y actualizar: comprobar error y reintento, con accesos de gestión disponibles. Reiniciar la API y pulsar Volver a intentar.
+7. Revisar en 375, 768, 1024 y 1440 píxeles, sin desborde horizontal. Comprobar que las cantidades se entienden sin depender del color de las barras.
+
 ## Recuperación
 
 1. Generar código para una cuenta existente.

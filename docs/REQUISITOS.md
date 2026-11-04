@@ -34,6 +34,12 @@ Fuente de verdad: `TPO Segundo Cuatrimestre 2026.pdf`, de cuatro páginas, ubica
 | Diseño responsive                  | Navegación móvil, grillas adaptables, formularios de una columna y tablas desplazables.                               |
 | Separación frontend/backend        | Repositorios independientes; proxy local, sin cambios al servidor.                                                    |
 
+## Extra implementado: dashboard con métricas y estadísticas
+
+En `/admin`, el Resumen muestra total de productos, activos e inactivos, distribución por disponibilidad y categoría, y consultas por estado. Incluye barras con cantidades y porcentajes, categorías vacías, actualización manual, fecha de actualización, carga, error y reintento. Consume exclusivamente los endpoints existentes; no agrega bibliotecas ni modifica el backend.
+
+Los conteos de productos incluyen todas las páginas y los inactivos. Las consultas utilizan `meta.total` por estado. No se presentan estadísticas históricas ni de ventas.
+
 ## Documentación de entrega
 
 - Descripción funcional: README y esta matriz.
@@ -48,7 +54,7 @@ Fuente de verdad: `TPO Segundo Cuatrimestre 2026.pdf`, de cuatro páginas, ubica
 - Tema: componentes para videojuegos. Marca: Pixel Forge Componentes.
 - Estética sobria y minimalista, exclusivamente modo claro.
 - Ejecución local; no se requiere publicación en Internet.
-- Se implementan todos los requisitos obligatorios. Las funcionalidades de puntaje extra del PDF quedan para una etapa opcional.
+- Se implementan todos los requisitos obligatorios. Se agrega el dashboard como funcionalidad de puntaje extra; los demás extras quedan para una etapa opcional.
 - No se integra correo real. La recuperación se demuestra con el código devuelto en desarrollo/pruebas.
 - No se implementan carrito, pagos, envíos ni asistente de armado de PC.
 - No se modifica el backend. Cada producto conserva una sola URL de imagen; múltiples imágenes figuran como extra en la consigna.

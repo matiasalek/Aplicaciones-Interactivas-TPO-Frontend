@@ -22,3 +22,15 @@ La primera versión se verificó con Node.js 24.20.0 y Chromium. Se utilizó el 
 6. Registro con sesión real; edición y persistencia de perfil e información institucional; CRUD de categoría y producto; precio actualizado; activación y desactivación; bloqueo de categoría en uso; contacto público y gestión de estados de consultas; recuperación y nueva contraseña; revocación del JWT anterior; eliminación de registros creados y cierre de sesión.
 
 Los datos de estas pruebas son temporales; no se cargaron en la base de demostración. Las capturas, trazas y resultados del navegador están excluidos de Git. Las pruebas se pueden reproducir siguiendo el README y usando una API con una base aislada.
+
+## Verificación del dashboard
+
+El dashboard se verificó con Node.js 24.20.0 y Chromium contra el backend existente, sin cambios, conectado a un clúster PostgreSQL 17 nuevo y aislado en el puerto 55449, base `pixel_forge_dashboard_test` y API en el puerto 3002. Se aplicaron las cinco migraciones y el seed originales. No se utilizó la base de demostración.
+
+- Once pruebas unitarias aprobadas: las siete anteriores y cuatro del dashboard. Cubren agregación de 205 productos en tres páginas, visibilidad, disponibilidad, categorías vacías, consultas con más de 100 registros según `meta.total`, ceros, error de API y cambios detectables durante la paginación.
+- Siete pruebas de navegador aprobadas: las seis anteriores y un recorrido del dashboard con conteos reales, creación y cambio de estado de consultas, actualización después de cambiar visibilidad, errores, reintento y estados vacíos simulados mediante interceptación de respuestas.
+- Revisión visual de capturas del dashboard en 1440 y 375 píxeles; sin desborde horizontal en 375, 768, 1024 y 1440.
+- Sin violaciones detectadas por axe en la comprobación incluida del dashboard en móvil; se mantienen las comprobaciones de las pantallas anteriores.
+- Build de producción y verificación de formato aprobados.
+
+Las capturas y trazas permanecen excluidas de Git. Las solicitudes entre endpoints no forman una transacción: las métricas son una lectura del estado actual, sin garantías de instantánea única si otros administradores modifican datos mientras cargan.
