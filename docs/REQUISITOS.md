@@ -32,13 +32,19 @@ Fuente de verdad: `TPO Segundo Cuatrimestre 2026.pdf`, de cuatro páginas, ubica
 | Autenticación y autorización       | JWT, perfil validado, manejo de expiración y autorización del backend.                                                |
 | Manejo de errores                  | Fallos de conexión, errores de negocio traducidos, estados vacíos y reintentos.                                       |
 | Diseño responsive                  | Navegación móvil, grillas adaptables, formularios de una columna y tablas desplazables.                               |
-| Separación frontend/backend        | Repositorios independientes; proxy local, sin cambios al servidor.                                                    |
+| Separación frontend/backend        | Repositorios independientes; comunicación por API REST mediante proxy local.                                          |
 
 ## Extra implementado: dashboard con métricas y estadísticas
 
 En `/admin`, el Resumen muestra total de productos, activos e inactivos, distribución por disponibilidad y categoría, y consultas por estado. Incluye barras con cantidades y porcentajes, categorías vacías, actualización manual, fecha de actualización, carga, error y reintento. Consume exclusivamente los endpoints existentes; no agrega bibliotecas ni modifica el backend.
 
 Los conteos de productos incluyen todas las páginas y los inactivos. Las consultas utilizan `meta.total` por estado. No se presentan estadísticas históricas ni de ventas.
+
+## Extra implementado: productos destacados
+
+Administración permite marcar y desmarcar productos destacados desde el listado y desde el formulario de alta/edición, con filtro de selección. Inicio publica hasta cuatro destacados activos y enlaza al catálogo filtrado. Las tarjetas y el detalle identifican la selección. Se mantienen búsqueda, categoría, disponibilidad, orden, paginación y filtros en URL.
+
+El backend incorpora `isFeatured`, validaciones, filtro público/administrativo y una sexta migración SQL, también incluida en el script de creación. Los productos previos quedan sin destacar; el seed conserva las selecciones. Los inactivos permanecen ocultos públicamente aunque sean destacados. La selección es independiente de la disponibilidad y no tiene límite ni orden manual.
 
 ## Documentación de entrega
 
@@ -54,7 +60,7 @@ Los conteos de productos incluyen todas las páginas y los inactivos. Las consul
 - Tema: componentes para videojuegos. Marca: Pixel Forge Componentes.
 - Estética sobria y minimalista, exclusivamente modo claro.
 - Ejecución local; no se requiere publicación en Internet.
-- Se implementan todos los requisitos obligatorios. Se agrega el dashboard como funcionalidad de puntaje extra; los demás extras quedan para una etapa opcional.
+- Se implementan todos los requisitos obligatorios. Se agregan el dashboard y los productos destacados como funcionalidades de puntaje extra; los demás extras quedan para una etapa opcional.
 - No se integra correo real. La recuperación se demuestra con el código devuelto en desarrollo/pruebas.
 - No se implementan carrito, pagos, envíos ni asistente de armado de PC.
-- No se modifica el backend. Cada producto conserva una sola URL de imagen; múltiples imágenes figuran como extra en la consigna.
+- El backend se amplía para persistir y filtrar productos destacados. Cada producto conserva una sola URL de imagen; múltiples imágenes figuran como extra en la consigna.

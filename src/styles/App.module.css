@@ -500,6 +500,23 @@
   background: currentColor;
   border-radius: 50%;
 }
+.productBadges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.featuredBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  background: #fbf1db;
+  color: #71511c;
+  font-size: 10px;
+  white-space: nowrap;
+}
 .out_of_stock {
   background: #f1f1ed;
   color: #59694d;
@@ -1425,6 +1442,7 @@
 }
 .adminFilters {
   display: flex;
+  flex-wrap: wrap;
   align-items: end;
   gap: 15px;
   margin-bottom: 22px;

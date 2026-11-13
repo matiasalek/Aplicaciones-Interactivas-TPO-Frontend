@@ -120,7 +120,9 @@ export function LoginPage({ register = false }) {
             {field("password", "Contraseña", {
               type: "password",
               autoComplete: register ? "new-password" : "current-password",
-              hint: register ? "Entre 8 y 72 caracteres." : undefined,
+              hint: register
+                ? "Entre 8 y 72 caracteres. Con emojis o letras acentuadas, el límite puede ser menor."
+                : undefined,
             })}
             {register ? (
               field("confirmPassword", "Repetí la contraseña", {
@@ -267,7 +269,7 @@ export function ResetPasswordPage() {
               {field("password", "Nueva contraseña", {
                 type: "password",
                 autoComplete: "new-password",
-                hint: "Entre 8 y 72 caracteres.",
+                hint: "Entre 8 y 72 caracteres. Con emojis o letras acentuadas, el límite puede ser menor.",
               })}
               {field("confirmPassword", "Repetí la contraseña", {
                 type: "password",

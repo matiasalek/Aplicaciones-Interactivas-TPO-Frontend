@@ -98,6 +98,16 @@ test("la limpieza conserva espacios significativos en contraseñas", () => {
     { name: "Ada", password: " segura123 ", confirmPassword: " segura123 " },
   );
 });
+test("la selección de destacado conserva booleanos y rechaza textos", () => {
+  const schema = { isFeatured: rules.product.isFeatured };
+  for (const isFeatured of [true, false]) {
+    assert.deepEqual(validate({ isFeatured }, schema), {});
+    assert.deepEqual(clean({ isFeatured }), { isFeatured });
+  }
+  for (const isFeatured of ["true", "false", "", 0, null])
+    assert.ok(validate({ isFeatured }, schema).isFeatured);
+  assert.deepEqual(validate({}, schema), {});
+});
 test("los enlaces externos solo permiten HTTP y HTTPS", () => {
   assert.equal(safeWebUrl("javascript:alert(1)"), null);
   assert.equal(safeWebUrl("data:text/html,test"), null);
@@ -107,5 +117,144 @@ test("los filtros descartan valores vacíos y codifican el texto", () => {
   assert.equal(
     queryString({ q: "CPU & GPU", categoryId: "", isActive: false, page: 2 }),
     "q=CPU+%26+GPU&isActive=false&page=2",
+  );
+});
+
+test("precios con centavos válidos y sin redondeo silencioso", () => {
+  const schema = { price: rules.product.price };
+  for (const price of [
+    0,
+    0.01,
+    0.29,
+    1.1,
+    123.45,
+    9999999999.99,
+    "0",
+    "0.29",
+    "123.45",
+  ])
+    assert.deepEqual(validate({ price }, schema), {}, String(price));
+  for (const price of [
+    null,
+    true,
+    false,
+    [],
+    [1],
+    {},
+    "",
+    " ",
+    -1,
+    1.001,
+    1.000000001,
+    0.0000001,
+    10000000000,
+    Infinity,
+    NaN,
+  ])
+    assert.ok(validate({ price }, schema).price, String(price));
+});
+
+test("identificadores enteros seguros y visibilidad con booleanos", () => {
+  const schema = {
+    categoryId: rules.product.categoryId,
+    isActive: rules.product.isActive,
+  };
+  assert.deepEqual(validate({ categoryId: "1", isActive: false }, schema), {});
+  for (const categoryId of [
+    true,
+    false,
+    null,
+    [1],
+    0,
+    1.5,
+    2147483648,
+    Number.MAX_SAFE_INTEGER + 1,
+  ])
+    assert.ok(validate({ categoryId }, schema).categoryId);
+  for (const isActive of ["true", "false", 1, null])
+    assert.ok(validate({ categoryId: "1", isActive }, schema).isActive);
+});
+
+test("correos alineados con el formato del backend en todos los formularios", () => {
+  for (const name of ["register", "login", "profile", "forgot", "contact"]) {
+    const schema = { email: rules[name].email };
+    for (const email of [
+      "ana@example.com",
+      " O'Connor+pc@EXAMPLE.COM ",
+      "ana.perez@example.com.ar",
+    ])
+      assert.deepEqual(validate({ email }, schema), {}, `${name}: ${email}`);
+    for (const email of [
+      ".ana@example.com",
+      "ana.@example.com",
+      "ana..p@example.com",
+      "ana@exam_ple.com",
+      "ana@example.c",
+      "ana@localhost",
+    ])
+      assert.ok(validate({ email }, schema).email, `${name}: ${email}`);
+  }
+});
+
+test("teléfonos permiten separadores habituales y exigen dígitos", () => {
+  for (const name of ["register", "profile", "contact", "store"]) {
+    const schema = { phone: rules[name].phone };
+    for (const phone of [
+      "11444",
+      "+54 (11) 4444-5555",
+      "11.4444.5555",
+      " 1144445555 ",
+    ])
+      assert.deepEqual(validate({ phone }, schema), {}, `${name}: ${phone}`);
+    for (const phone of [
+      "abcde",
+      "-----",
+      "12-34",
+      "11+44445555",
+      "114444hola",
+      "1".repeat(51),
+    ])
+      assert.ok(validate({ phone }, schema).phone, `${name}: ${phone}`);
+  }
+  assert.deepEqual(validate({ phone: "" }, { phone: rules.contact.phone }), {});
+});
+
+test("URLs completas HTTP/HTTPS y límite uniforme para imágenes y redes", () => {
+  for (const rule of [
+    rules.product.imageUrl,
+    rules.store.instagram,
+    rules.store.facebook,
+    rules.store.website,
+  ]) {
+    const schema = { url: rule };
+    for (const url of [
+      "https://example.com/a.png",
+      "HTTP://localhost:3000/a",
+      " https://example.com ",
+    ])
+      assert.deepEqual(validate({ url }, schema), {}, url);
+    for (const url of [
+      "ftp://example.com/a.png",
+      "javascript:alert(1)",
+      "data:image/png;base64,AA",
+      "//example.com/a",
+      "https:example.com",
+      "https://example.com/" + "a".repeat(2000),
+    ])
+      assert.ok(validate({ url }, schema).url, url);
+  }
+});
+
+test("las contraseñas nuevas respetan bytes UTF-8 sin restringir el acceso existente", () => {
+  for (const name of ["register", "reset"]) {
+    const schema = { password: rules[name].password };
+    for (const password of ["a".repeat(72), "é".repeat(36), "😀".repeat(18)])
+      assert.deepEqual(validate({ password }, schema), {});
+    for (const password of ["a".repeat(73), "é".repeat(37), "😀".repeat(19)])
+      assert.ok(validate({ password }, schema).password);
+  }
+  assert.deepEqual(
+    validate({ password: "é".repeat(40) }, { password: rules.login.password }),
+    {},
   );
 });

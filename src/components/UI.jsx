@@ -159,12 +159,19 @@ export function Form({
                 [name]: validate(next, schema)[name],
               }));
           }}
-          onBlur={() =>
+          onBlur={(event) => {
+            // El envío valida todos los campos. Evitar mover el botón entre
+            // presionar y soltar el mouse al agregar un error debajo del campo.
+            if (
+              event.relatedTarget?.form === formRef.current &&
+              event.relatedTarget.type === "submit"
+            )
+              return;
             setErrors((previous) => ({
               ...previous,
               [name]: validate(values, schema)[name],
-            }))
-          }
+            }));
+          }}
           aria-invalid={!!errors[name]}
           aria-describedby={
             errors[name] ? `${id}-error` : hint ? `${id}-hint` : undefined

@@ -34,3 +34,34 @@ El dashboard se verificó con Node.js 24.20.0 y Chromium contra el backend exist
 - Build de producción y verificación de formato aprobados.
 
 Las capturas y trazas permanecen excluidas de Git. Las solicitudes entre endpoints no forman una transacción: las métricas son una lectura del estado actual, sin garantías de instantánea única si otros administradores modifican datos mientras cargan.
+
+## Verificación de productos destacados — 13 de noviembre de 2026
+
+Se verificaron ambos proyectos con Node.js 24.20.0, Chromium y PostgreSQL 17 temporal en el puerto 55459. La API de navegador utilizó el puerto 3003 y la base `pixel_forge_featured_e2e`, con las seis migraciones y el seed. La integración del backend utilizó otra base, `pixel_forge_featured_integration`. No se utilizaron datos de demostración.
+
+- Frontend: doce pruebas unitarias aprobadas y nueve de navegador aprobadas, incluidos todos los recorridos anteriores.
+- Backend: quince pruebas rápidas y diecisiete de integración aprobadas; se agregaron tres pruebas de validación y cinco de integración de destacados.
+- El recorrido nuevo cubre creación desde formulario con destacado inicialmente desmarcado, edición y persistencia, interruptor del listado, filtros administrativos en URL, sección de hasta cuatro productos, acceso a todos los destacados y combinación con categoría. Comprueba identificación en detalle, exclusión de inactivos, conservación de la selección al desactivar/reactivar y conservación de precio/visibilidad al quitar el destacado.
+- Se verifican selección vacía, catálogo sin resultados, limpieza de filtros y error/reintento de la sección. Un PATCH fallido muestra el error y conserva el estado previo del interruptor.
+- La integración real comprueba booleanos estrictos, valor por defecto, autenticación, filtros combinados con búsqueda y disponibilidad, orden, paginación, totales y conservación de destacados al repetir el seed.
+- Una base separada con las primeras cinco migraciones y veinte productos se actualizó a la sexta: se compararon todos los datos anteriores de productos y categorías, incluidos identificadores y fechas. Se conservaron sin cambios y todos los productos quedaron sin destacar. Repetir el migrador no aplicó cambios adicionales.
+- Se probó `backend/database/create_database.sql` sobre otra base vacía; luego el migrador reconoció las seis versiones y el seed cargó los veinte productos.
+- Revisión visual de la sección y listado administrativo en escritorio/móvil, y del formulario y detalle en escritorio. Sin desborde horizontal de Inicio y el listado en 375, 768, 1024 y 1440 píxeles.
+- Sin violaciones detectadas por axe en las comprobaciones incluidas de Inicio con destacados y el listado administrativo móvil; se mantienen las anteriores. No constituye una auditoría completa de accesibilidad.
+
+Los servicios temporales se detuvieron al finalizar. Para revisar una instalación anterior, aplicar `npm run db:migrate` desde el backend y reiniciar la API, como indica el README. La funcionalidad no agrega dependencias.
+
+## Revisión posterior: validaciones de entrada
+
+El 13 de noviembre de 2026 se alinearon precios, identificadores, URLs, correos, teléfonos y contraseñas entre ambos proyectos. Se usaron nuevas bases aisladas en PostgreSQL 17, puerto 55469 (`pixel_forge_validation_integration` y `pixel_forge_validation_e2e`), y una API temporal en 3004. No se utilizó ni migró la base de demostración; no se agregaron dependencias ni migraciones.
+
+- Frontend: dieciocho pruebas unitarias y once de navegador aprobadas; se conservaron todos los recorridos anteriores.
+- Backend: veintidós pruebas rápidas y veintiuna de integración aprobadas. Las entradas rechazadas se compararon contra los datos anteriores para comprobar que no se crearan ni modificaran registros.
+- Regresión de precios: números finitos, cero, centavos como `0.29`, máximo permitido, decimales adicionales y rechazo de nulos, booleanos, arreglos y cadenas en la API. Identificadores validados dentro del rango integer de PostgreSQL, con respuesta `400` ante valores fuera de rango.
+- Regresión de imágenes y redes: URLs completas HTTP/HTTPS, espacios exteriores y límite de 2000 caracteres; rechazo de FTP, JavaScript, datos embebidos y URLs incompletas.
+- Correos con el mismo formato práctico en frontend/backend y normalización antes de validar en la API. Teléfonos con al menos cinco dígitos, separadores habituales y teléfono opcional en contacto.
+- Registro y restablecimiento comprueban el límite de 72 bytes UTF-8 para contraseñas nuevas, incluidos emojis; el inicio de sesión conserva compatibilidad con credenciales existentes.
+- Navegador: los formularios inválidos no generan solicitudes de escritura; los mensajes y estados accesibles se corrigen al editar. Se comprobó el guardado real de `0.29` sin redondeo.
+- Se corrigió un problema del formulario: al salir del último campo hacia Enviar, un error podía desplazar el botón durante el clic. La validación de ese caso se realiza en el envío y las pruebas comprueban que un único clic muestre errores y enfoque el primero.
+
+Build y formato aprobados. Los servicios temporales se detuvieron al finalizar. El detalle del contrato de la API está en `backend/docs/VALIDACIONES.md` del repositorio del servidor.

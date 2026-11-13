@@ -35,6 +35,18 @@ Iniciar la API y PostgreSQL, ejecutar `npm run dev` y abrir http://127.0.0.1:517
 6. Detener la API y actualizar: comprobar error y reintento, con accesos de gestión disponibles. Reiniciar la API y pulsar Volver a intentar.
 7. Revisar en 375, 768, 1024 y 1440 píxeles, sin desborde horizontal. Comprobar que las cantidades se entienden sin depender del color de las barras.
 
+## Productos destacados
+
+1. Si se actualiza una instalación anterior, detener la API, ejecutar `npm run db:migrate` desde `backend/` y reiniciarla. Los productos previos deben conservar sus datos y quedar sin destacar.
+2. Crear un producto: **Destacar producto** comienza desmarcado. Marcarlo, guardar y recargar la edición para comprobar persistencia. Repetir al editar un producto existente.
+3. Desde el listado, destacar y quitar de destacados; comprobar mensajes, bloqueo durante el envío y filtros **Destacados / Sin destacar** combinados con categoría, búsqueda y visibilidad. Recargar y comprobar que los filtros persisten en URL.
+4. Abrir Inicio: mostrar hasta cuatro destacados activos, del más reciente al más antiguo, con identificación y enlace a todos. Un producto común no debe aparecer en esa selección.
+5. Abrir **Ver todos los destacados**: comprobar el filtro **Selección → Solo destacados**, combinarlo con búsqueda, categoría, disponibilidad y orden. Paginar, recargar, retroceder y limpiar filtros.
+6. Abrir un destacado y comprobar la identificación junto a la disponibilidad. Quitar el destacado: debe seguir en el catálogo si está activo.
+7. Desactivar un destacado: debe desaparecer de Inicio, catálogo y detalle público, manteniendo la selección en administración. Reactivarlo: debe volver a aparecer.
+8. Sin destacados, comprobar el estado vacío de Inicio y que el catálogo general siga disponible. Interrumpir la solicitud de destacados y reintentar: la sección informa el error sin bloquear el resto del inicio.
+9. Revisar Inicio y administración en 375, 768, 1024 y 1440 píxeles; las tablas se desplazan dentro de su contenedor, sin desbordar la página. Comprobar teclado, etiquetas y estados de los interruptores.
+
 ## Recuperación
 
 1. Generar código para una cuenta existente.
@@ -42,6 +54,15 @@ Iniciar la API y PostgreSQL, ejecutar `npm run dev` y abrir http://127.0.0.1:517
 3. Comprobar que la contraseña anterior deja de servir y la nueva permite iniciar sesión.
 4. Reutilizar el código: debe informar que es inválido o fue utilizado.
 5. Probar un correo inexistente: el resultado debe ser genérico.
+
+## Validaciones de entrada
+
+1. En Contacto, Registro y Perfil, probar un correo con puntos consecutivos (`ana..p@example.com`): debe rechazarse. Un correo con `+` y un dominio normal debe aceptarse.
+2. Probar teléfono `abcde`, solo guiones y `12-34`: deben rechazarse. `+54 (11) 4444-5555` debe aceptarse; en Contacto el teléfono vacío sigue siendo válido.
+3. En productos, probar precio `1.000000001`: debe informar el límite de dos decimales; `0`, `0.29` y `123.45` deben guardarse sin redondeo. La API debe rechazar también precio nulo, booleano o en texto, y categoría booleana.
+4. Probar `ftp://example.com/a.png` como imagen y `ftp://example.com` como red social: deben rechazarse localmente y en la API. Probar URLs HTTP/HTTPS completas y el límite de 2000 caracteres.
+5. En Registro y Restablecimiento, probar diecinueve emojis de cuatro bytes: deben rechazarse por exceder el límite; dieciocho deben pasar la validación de longitud. Comprobar la confirmación de contraseña.
+6. Corregir un campo con error: debe actualizar su mensaje y estado accesible. Enviar con un único clic desde el último campo inválido: deben mostrarse los errores y enfocarse el primero sin necesitar otro clic.
 
 ## Errores, accesibilidad y responsive
 

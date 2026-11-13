@@ -126,11 +126,14 @@ export function AdminProductsPage() {
   const isActive = ["true", "false"].includes(params.get("isActive"))
     ? params.get("isActive")
     : "";
+  const isFeatured = ["true", "false"].includes(params.get("isFeatured"))
+    ? params.get("isFeatured")
+    : "";
   const categoryId = /^[1-9]\d*$/.test(params.get("categoryId") || "")
     ? params.get("categoryId")
     : "";
   const resource = useResource(
-    `/admin/products?${queryString({ q, page, isActive, categoryId, limit: 12 })}`,
+    `/admin/products?${queryString({ q, page, isActive, isFeatured, categoryId, limit: 12 })}`,
     { authenticated: true },
   );
   const categories = useResource("/categories");
@@ -143,6 +146,7 @@ export function AdminProductsPage() {
       queryString({
         q,
         isActive,
+        isFeatured,
         categoryId,
         ...values,
         page: values.page || 1,
@@ -150,6 +154,7 @@ export function AdminProductsPage() {
     );
   }
   async function toggle(product) {
+    setMessage("");
     await mutation.run(async () => {
       await api(`/admin/products/${product.id}`, {
         method: "PATCH",
@@ -160,6 +165,24 @@ export function AdminProductsPage() {
         product.isActive
           ? "Producto desactivado. Ya no se muestra en el catálogo público."
           : "Producto activado. Ya está visible en el catálogo.",
+      );
+      resource.reload();
+    });
+  }
+  async function toggleFeatured(product) {
+    setMessage("");
+    await mutation.run(async () => {
+      await api(`/admin/products/${product.id}`, {
+        method: "PATCH",
+        authenticated: true,
+        body: { isFeatured: !product.isFeatured },
+      });
+      setMessage(
+        product.isFeatured
+          ? "Producto quitado de destacados."
+          : product.isActive
+            ? "Producto destacado. Ya aparece en la selección pública."
+            : "Producto destacado. Aparecerá en la selección pública cuando lo actives.",
       );
       resource.reload();
     });
@@ -232,7 +255,19 @@ export function AdminProductsPage() {
             ))}
           </select>
         </label>
-        {(q || isActive || categoryId) && (
+        <div className={s.filterLabel}>
+          <label htmlFor="admin-featured-filter">Destacados</label>
+          <select
+            id="admin-featured-filter"
+            value={isFeatured}
+            onChange={(event) => update({ isFeatured: event.target.value })}
+          >
+            <option value="">Todos</option>
+            <option value="true">Destacados</option>
+            <option value="false">Sin destacar</option>
+          </select>
+        </div>
+        {(q || isActive || isFeatured || categoryId) && (
           <Button variant="ghost" onClick={() => setParams({})}>
             Limpiar
           </Button>
@@ -253,6 +288,7 @@ export function AdminProductsPage() {
                   <th>Precio</th>
                   <th>Disponibilidad</th>
                   <th>Visibilidad</th>
+                  <th>Destacado</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -283,6 +319,19 @@ export function AdminProductsPage() {
                       >
                         <span />
                         {product.isActive ? "Activo" : "Inactivo"}
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        className={`${s.toggle} ${product.isFeatured ? s.toggleOn : ""}`}
+                        role="switch"
+                        aria-checked={product.isFeatured}
+                        aria-label={`Destacado de ${product.name}`}
+                        disabled={mutation.pending}
+                        onClick={() => toggleFeatured(product)}
+                      >
+                        <span />
+                        {product.isFeatured ? "Sí" : "No"}
                       </button>
                     </td>
                     <td>
@@ -370,6 +419,7 @@ export function ProductEditorPage({ create = false }) {
         price: String(product.price),
         availability: product.availability,
         isActive: product.isActive,
+        isFeatured: product.isFeatured,
       }
     : {
         name: "",
@@ -379,6 +429,7 @@ export function ProductEditorPage({ create = false }) {
         price: "",
         availability: "in_stock",
         isActive: true,
+        isFeatured: false,
       };
   return (
     <>
@@ -473,6 +524,19 @@ export function ProductEditorPage({ create = false }) {
                           />
                           Mostrar en el catálogo público
                         </label>
+                        <label className={s.checkbox}>
+                          <input
+                            type="checkbox"
+                            checked={values.isFeatured}
+                            onChange={(event) =>
+                              setValues({
+                                ...values,
+                                isFeatured: event.target.checked,
+                              })
+                            }
+                          />
+                          Destacar producto
+                        </label>
                       </>
                     )}
                   </Form>
@@ -487,6 +551,12 @@ export function ProductEditorPage({ create = false }) {
                   <p>
                     “Sin stock” indica disponibilidad; desactivar oculta el
                     producto del sitio público.
+                  </p>
+                  <p>
+                    Los destacados aparecen en una selección del inicio y tienen
+                    un filtro propio en el catálogo. Si el producto está
+                    inactivo, conserva la selección pero no se muestra
+                    públicamente.
                   </p>
                 </aside>
               </div>

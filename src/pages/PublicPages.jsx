@@ -13,8 +13,10 @@ import {
 import { Link, useParams, useSearchParams } from "react-router";
 import { useStore } from "../components/Layouts";
 import HardwareArt from "../components/HardwareArt";
+import FeaturedProducts from "../components/FeaturedProducts";
 import ProductCard, {
   AvailabilityBadge,
+  FeaturedBadge,
   ProductImage,
 } from "../components/ProductCard";
 import {
@@ -142,6 +144,7 @@ export function HomePage() {
           )}
         </ResourceState>
       </section>
+      <FeaturedProducts />
       <section className={`${s.section} ${s.softSection}`}>
         <div className={s.sectionHeading}>
           <div>
@@ -206,13 +209,14 @@ export function CatalogPage() {
     Math.min(100000, Number.parseInt(params.get("page"), 10) || 1),
   );
   const [search, setSearch] = useState(q);
+  const isFeatured = params.get("isFeatured") === "true" ? "true" : "";
   useEffect(() => {
     setSearch(q);
-  }, [q, categoryId, stock, sort, page]);
+  }, [q, categoryId, stock, sort, page, isFeatured]);
   const [searchError, setSearchError] = useState("");
   const categories = useResource("/categories");
   const products = useResource(
-    `/products?${queryString({ q, categoryId, availability: stock, sort, page, limit: 12 })}`,
+    `/products?${queryString({ q, categoryId, availability: stock, isFeatured, sort, page, limit: 12 })}`,
   );
   function update(values) {
     setParams(
@@ -220,13 +224,14 @@ export function CatalogPage() {
         q,
         categoryId,
         availability: stock,
+        isFeatured,
         sort,
         ...values,
         page: values.page || 1,
       }),
     );
   }
-  const active = q || categoryId || stock;
+  const active = q || categoryId || stock || isFeatured;
   return (
     <div className={s.container}>
       <PageHeading
@@ -273,6 +278,15 @@ export function CatalogPage() {
                 {label}
               </option>
             ))}
+          </select>
+          <label htmlFor="featured-filter">Selección</label>
+          <select
+            id="featured-filter"
+            value={isFeatured}
+            onChange={(event) => update({ isFeatured: event.target.value })}
+          >
+            <option value="">Todos los componentes</option>
+            <option value="true">Solo destacados</option>
           </select>
           {active && (
             <Button
@@ -392,7 +406,10 @@ export function ProductPage() {
                     {product.category.name}
                   </Link>
                   <h1>{product.name}</h1>
-                  <AvailabilityBadge value={product.availability} />
+                  <div className={s.productBadges}>
+                    <AvailabilityBadge value={product.availability} />
+                    {product.isFeatured && <FeaturedBadge />}
+                  </div>
                   <p className={s.detailPrice}>{money(product.price)}</p>
                   <p className={s.muted}>
                     Precio expresado en pesos argentinos.

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Star } from "lucide-react";
 import { Link } from "react-router";
 import { availability, money, safeWebUrl } from "../lib/api";
 import HardwareArt from "./HardwareArt";
@@ -36,6 +36,14 @@ export function AvailabilityBadge({ value }) {
     </span>
   );
 }
+export function FeaturedBadge() {
+  return (
+    <span className={s.featuredBadge}>
+      <Star size={13} aria-hidden="true" />
+      Destacado
+    </span>
+  );
+}
 export default function ProductCard({ product }) {
   return (
     <article className={s.productCard}>
@@ -47,7 +55,10 @@ export default function ProductCard({ product }) {
             <ArrowUpRight size={18} />
           </div>
           <h3>{product.name}</h3>
-          <AvailabilityBadge value={product.availability} />
+          <div className={s.productBadges}>
+            <AvailabilityBadge value={product.availability} />
+            {product.isFeatured && <FeaturedBadge />}
+          </div>
           <p className={s.price}>{money(product.price)}</p>
         </div>
       </Link>
