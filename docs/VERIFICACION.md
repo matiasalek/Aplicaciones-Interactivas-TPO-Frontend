@@ -65,3 +65,19 @@ El 13 de noviembre de 2026 se alinearon precios, identificadores, URLs, correos,
 - Se corrigió un problema del formulario: al salir del último campo hacia Enviar, un error podía desplazar el botón durante el clic. La validación de ese caso se realiza en el envío y las pruebas comprueban que un único clic muestre errores y enfoque el primero.
 
 Build y formato aprobados. Los servicios temporales se detuvieron al finalizar. El detalle del contrato de la API está en `backend/docs/VALIDACIONES.md` del repositorio del servidor.
+
+## Galerías de imágenes — 13 de noviembre de 2026
+
+Se implementaron galerías mediante URLs en ambos proyectos. La verificación utilizó Node.js 24.20.0, Chromium y PostgreSQL 17 nuevo en el puerto 55479, con bases separadas `pixel_forge_gallery_integration` y `pixel_forge_gallery_e2e`; API temporal 3005. No se utilizó ni migró la base de demostración.
+
+- Frontend: 21 pruebas unitarias y 13 de navegador aprobadas, incluidos todos los recorridos anteriores. Se agregaron tres unitarias y dos de navegador.
+- Backend: 26 pruebas rápidas y 29 de integración aprobadas; se agregaron cuatro rápidas y ocho de integración.
+- El recorrido del editor verifica agregar filas, vista previa, errores por URL, duplicados, máximo de diez imágenes, orden, cambio de principal, eliminación y conservación de al menos una imagen. Se comprueba persistencia real al guardar y recargar, sin solicitudes de escritura ante errores locales.
+- El detalle verifica selección de miniaturas con mouse y teclado, contador y alternativa local para una imagen inaccesible. Las tarjetas usan la principal actualizada. Con una sola imagen no se agregan miniaturas.
+- La API conserva `imageUrl` y devuelve también `imageUrls` en orden. Se comprobaron contratos anteriores, actualización de otros campos sin perder imágenes, listados sin multiplicar productos, visibilidad, destacados y eliminación en cascada.
+- Se simuló un fallo de inserción de imágenes para comprobar rollback completo en alta y edición, incluidos los campos del producto. Se probaron ediciones simultáneas sin mezclar colecciones y repetición del seed sin reemplazar galerías administradas.
+- En `pixel_forge_gallery_upgrade` se reprodujo la versión con seis migraciones y veinte productos del seed anterior, incluidos activos/inactivos y destacados. La migración 007 conservó todos los campos y categorías, y copió cada URL anterior a la primera posición. Repetir el migrador no aplicó más cambios.
+- En otra base vacía, `pixel_forge_gallery_sql`, el SQL de entrega creó las siete versiones; el migrador las reconoció y el seed cargó veinte productos con veinte imágenes iniciales.
+- Se revisaron capturas del detalle y editor en 375 y 1440 píxeles; sin desborde de página también en 768 y 1024. Las comprobaciones axe incluidas del detalle y editor no detectaron violaciones; no constituyen una auditoría completa de accesibilidad.
+
+Build y formato aprobados. Los servicios temporales se detuvieron al finalizar. No se agregaron dependencias y las capturas permanecen ignoradas. Para actualizar una instalación anterior, detener la API, ejecutar `npm run db:migrate` desde el backend y reiniciarla; no recrear la base.

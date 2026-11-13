@@ -22,6 +22,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { AvailabilityBadge } from "../components/ProductCard";
 import { Dashboard } from "../components/Dashboard";
+import ProductImagesEditor from "../components/ProductImagesEditor";
 import {
   ArrowLink,
   BackLink,
@@ -416,6 +417,7 @@ export function ProductEditorPage({ create = false }) {
         categoryId: String(product.category.id),
         description: product.description,
         imageUrl: product.imageUrl,
+        additionalImageUrls: product.imageUrls?.slice(1) || [],
         price: String(product.price),
         availability: product.availability,
         isActive: product.isActive,
@@ -426,6 +428,7 @@ export function ProductEditorPage({ create = false }) {
         categoryId: "",
         description: "",
         imageUrl: "",
+        additionalImageUrls: [],
         price: "",
         availability: "in_stock",
         isActive: true,
@@ -455,13 +458,16 @@ export function ProductEditorPage({ create = false }) {
                     submitLabel={create ? "Crear producto" : "Guardar producto"}
                     onSubmit={(values) =>
                       mutation.run(async () => {
+                        const { imageUrl, additionalImageUrls, ...body } =
+                          values;
                         await api(
                           create ? "/admin/products" : `/admin/products/${id}`,
                           {
                             method: create ? "POST" : "PATCH",
                             authenticated: true,
                             body: {
-                              ...values,
+                              ...body,
+                              imageUrls: [imageUrl, ...additionalImageUrls],
                               categoryId: Number(values.categoryId),
                               price: Number(values.price),
                             },
@@ -477,7 +483,7 @@ export function ProductEditorPage({ create = false }) {
                       })
                     }
                   >
-                    {({ field, values, setValues }) => (
+                    {({ field, values, setValues, errors, setErrors }) => (
                       <>
                         {field("name", "Nombre del producto")}
                         {field("categoryId", "Categoría", {
@@ -493,11 +499,18 @@ export function ProductEditorPage({ create = false }) {
                           multiline: true,
                           rows: 5,
                         })}
-                        {field("imageUrl", "URL de la imagen", {
-                          type: "url",
-                          placeholder: "https://…",
-                          hint: "Usá una URL pública de imagen. No se suben archivos al servidor.",
-                        })}
+                        <ProductImagesEditor
+                          values={values}
+                          setValues={setValues}
+                          errors={errors}
+                          setErrors={setErrors}
+                          categoryName={
+                            categories.data.data.find(
+                              (category) =>
+                                String(category.id) === values.categoryId,
+                            )?.name
+                          }
+                        />
                         <div className={s.twoColumns}>
                           {field("price", "Precio (ARS)", {
                             type: "number",

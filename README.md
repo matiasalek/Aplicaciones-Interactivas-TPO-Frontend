@@ -6,7 +6,7 @@ La fuente de verdad es **TPO Segundo Cuatrimestre 2026.pdf**, conservado sin cam
 
 ## Ejecución local
 
-Requisitos: Node.js 24 (`.node-version`), npm y el backend actualizado con PostgreSQL, sus seis migraciones y su carga inicial de al menos 20 productos.
+Requisitos: Node.js 24 (`.node-version`), npm y el backend actualizado con PostgreSQL, sus siete migraciones y su carga inicial de al menos 20 productos.
 
 1. Iniciar PostgreSQL y la API siguiendo el README del backend. La API debe escuchar en `http://localhost:3000`.
 2. En este repositorio:
@@ -21,20 +21,21 @@ Requisitos: Node.js 24 (`.node-version`), npm y el backend actualizado con Postg
 
 No es necesario agregar CORS: el servidor de Vite reenvía `/api` al backend. Si la API escucha en otro puerto, copiar `.env.example` a `.env` y ajustar `API_TARGET`; reiniciar Vite después. No se necesita publicar el proyecto.
 
-Si ya tenías el backend anterior, detené la API, ejecutá `npm run db:migrate` desde su carpeta `backend/` y reiniciala antes de usar esta versión. La nueva migración `006_add_featured_products.sql` conserva los datos existentes y agrega la selección de destacados.
+Si ya tenías el backend anterior, detené la API, ejecutá `npm run db:migrate` desde su carpeta `backend/` y reiniciala antes de usar esta versión. Las migraciones de destacados y galería conservan los datos existentes. `007_create_product_images.sql` incorpora la imagen actual de cada producto como primera imagen de su galería.
 
 Si PostgreSQL o la API están detenidos, las pantallas muestran un error con la posibilidad de reintentar. No se sustituyen los datos reales por datos ficticios.
 
 ## Funcionalidad
 
 - Inicio, catálogo con búsqueda por texto, categoría, disponibilidad, orden y paginación.
-- Detalle del producto con imagen, descripción, precio y disponibilidad; consulta con asunto precargado.
+- Detalle del producto con galería de imágenes, descripción, precio y disponibilidad; consulta con asunto precargado.
 - Información del comercio, dirección, teléfono, redes y horarios obtenidos de la API.
 - Formulario de contacto persistido en PostgreSQL.
 - Registro, inicio y cierre de sesión, recuperación y restablecimiento de contraseña.
 - Rutas administrativas protegidas y recuperación del destino solicitado al iniciar sesión.
 - CRUD de productos y categorías, activación/desactivación y gestión de consultas.
 - Productos destacados: selección desde el listado y formulario administrativos, sección en Inicio, filtro de catálogo e identificación en tarjetas y detalle.
+- Galerías de una a diez imágenes por producto mediante URLs, con orden e imagen principal administrables.
 - Dashboard en Administración → Resumen: totales de productos, visibilidad, disponibilidad, categorías y consultas por estado, con actualización manual.
 - Edición de información institucional y datos personales del administrador.
 - Validaciones locales alineadas con los contratos del backend, estados de carga, errores y confirmaciones de eliminación.
@@ -69,6 +70,14 @@ No hay límite de productos destacados ni orden manual. Un producto inactivo con
 
 Los productos existentes y los nuevos quedan sin destacar por defecto. La migración no selecciona productos automáticamente y repetir el seed conserva las selecciones del administrador. Sin destacados, el inicio muestra un estado vacío y el resto del catálogo sigue disponible. La sección incluye carga, error y reintento. No se agregaron dependencias.
 
+## Galería de imágenes
+
+En el formulario de producto se pueden agregar de una a diez URLs públicas HTTP/HTTPS, de hasta 2000 caracteres cada una. **Agregar imagen** incorpora una fila; los botones de subir y bajar cambian el orden, y eliminar quita una imagen del formulario. La primera es la principal y se utiliza en tarjetas del catálogo y destacados. Para cambiarla, mover la imagen elegida al primer lugar. Siempre debe quedar al menos una imagen.
+
+Las filas incluyen una vista previa, validaciones por imagen y control de URLs repetidas. Los cambios se guardan al pulsar **Crear producto** o **Guardar producto**. El detalle público permite seleccionar miniaturas con mouse o teclado y muestra la posición actual; un producto con una sola imagen conserva la presentación simple.
+
+El backend devuelve `imageUrls` en orden y conserva `imageUrl` como primera imagen por compatibilidad. La actualización de producto y galería es transaccional. La migración preserva las imágenes anteriores, el seed respeta galerías administradas y la eliminación del producto borra sus registros de imágenes, sin modificar archivos remotos. No se suben archivos ni se agregan dependencias.
+
 ## Validaciones
 
 Todos los formularios validan antes de enviar y el backend vuelve a validar los datos de manera independiente. Los precios admiten desde cero hasta 9.999.999.999,99 ARS con hasta dos decimales, sin redondear valores inválidos. La interfaz convierte precio y categoría a números JSON; la API rechaza texto, booleanos y nulos en esos campos.
@@ -89,7 +98,7 @@ Las rutas privadas del frontend son una ayuda de navegación; la autorización e
 
 ## Imágenes y enlaces
 
-Los productos utilizan una URL de imagen, de acuerdo con el backend. Se aceptan direcciones HTTP/HTTPS. Si la carga falla o el seed utiliza `placehold.co`, se muestra una ilustración vectorial local de la categoría, identificada como tal; no se presenta como fotografía del modelo. Las imágenes personalizadas se muestran normalmente. Las redes se abren en otra pestaña y se filtran para permitir solamente HTTP/HTTPS.
+Los productos utilizan URLs HTTP/HTTPS para su galería. Si una imagen falla o el seed utiliza `placehold.co`, se muestra una ilustración vectorial local de la categoría, identificada como tal en la vista principal; no se presenta como fotografía del modelo. Las demás imágenes siguen disponibles. Las imágenes personalizadas se muestran normalmente. Las redes se abren en otra pestaña y se filtran para permitir solamente HTTP/HTTPS.
 
 La tipografía usa fuentes web de Google con alternativas del sistema; si no hay Internet se utilizan las alternativas. Las ilustraciones e íconos se incluyen en el frontend.
 
@@ -103,7 +112,7 @@ La tipografía usa fuentes web de Google con alternativas del sistema; si no hay
 | `npm test`         | Pruebas unitarias de validaciones y utilidades.     |
 | `npm run test:e2e` | Pruebas de navegador con Chromium y API real.       |
 
-Para las pruebas de navegador, instalar Chromium una vez con `npx playwright install chromium`. Estas pruebas **crean, modifican y eliminan sus propios registros**. Usar una instancia de backend conectada a una base exclusiva de pruebas con el seed cargado, nunca la base de demostración. El frontend de las pruebas se inicia automáticamente en 5173; `API_TARGET` determina el backend usado. El backend utilizado debe incluir la migración de productos destacados.
+Para las pruebas de navegador, instalar Chromium una vez con `npx playwright install chromium`. Estas pruebas **crean, modifican y eliminan sus propios registros**. Usar una instancia de backend conectada a una base exclusiva de pruebas con las siete migraciones y el seed cargado, nunca la base de demostración. El frontend de las pruebas se inicia automáticamente en 5173; `API_TARGET` determina el backend usado.
 
 ```bash
 API_TARGET=http://127.0.0.1:3001 E2E_ALLOW_WRITES=1 npm run test:e2e

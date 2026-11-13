@@ -14,10 +14,10 @@ import { Link, useParams, useSearchParams } from "react-router";
 import { useStore } from "../components/Layouts";
 import HardwareArt from "../components/HardwareArt";
 import FeaturedProducts from "../components/FeaturedProducts";
+import ProductGallery from "../components/ProductGallery";
 import ProductCard, {
   AvailabilityBadge,
   FeaturedBadge,
-  ProductImage,
 } from "../components/ProductCard";
 import {
   ArrowLink,
@@ -397,7 +397,7 @@ export function ProductPage() {
           {product && (
             <>
               <div className={s.productDetail}>
-                <ProductImage product={product} large />
+                <ProductGallery key={product.id} product={product} />
                 <div className={s.productInfo}>
                   <Link
                     className={s.eyebrow}

@@ -258,3 +258,101 @@ test("las contraseñas nuevas respetan bytes UTF-8 sin restringir el acceso exis
     {},
   );
 });
+
+test("las imágenes adicionales validan cada URL, cantidad y tipo de dato", () => {
+  const schema = {
+    imageUrl: rules.product.imageUrl,
+    additionalImageUrls: rules.product.additionalImageUrls,
+  };
+  const imageUrl = "https://example.com/main.png";
+  const urls = Array.from(
+    { length: 9 },
+    (_, index) => `https://example.com/${index}.png`,
+  );
+  assert.deepEqual(
+    validate({ imageUrl, additionalImageUrls: urls }, schema),
+    {},
+  );
+  assert.deepEqual(validate({ imageUrl }, schema), {});
+  assert.ok(
+    validate(
+      {
+        imageUrl,
+        additionalImageUrls: [...urls, "https://example.com/extra.png"],
+      },
+      schema,
+    ).additionalImageUrls,
+  );
+  for (const additionalImageUrls of [null, "https://example.com/a.png", {}])
+    assert.ok(
+      validate({ imageUrl, additionalImageUrls }, schema).additionalImageUrls,
+    );
+  for (const value of [
+    "",
+    "  ",
+    null,
+    1,
+    "ftp://example.com/a.png",
+    "javascript:alert(1)",
+    "https://example.com/" + "a".repeat(2000),
+  ])
+    assert.ok(
+      validate({ imageUrl, additionalImageUrls: [value] }, schema)[
+        "additionalImageUrls.0"
+      ],
+    );
+});
+
+test("la galería rechaza duplicados después de normalizar las URLs", () => {
+  const schema = {
+    imageUrl: rules.product.imageUrl,
+    additionalImageUrls: rules.product.additionalImageUrls,
+  };
+  assert.ok(
+    validate(
+      {
+        imageUrl: "https://example.com",
+        additionalImageUrls: [" HTTPS://EXAMPLE.COM:443/ "],
+      },
+      schema,
+    )["additionalImageUrls.0"],
+  );
+  assert.ok(
+    validate(
+      {
+        imageUrl: "https://example.com/main.png",
+        additionalImageUrls: [
+          "https://example.com/a.png",
+          " https://example.com/a.png ",
+        ],
+      },
+      schema,
+    )["additionalImageUrls.1"],
+  );
+  const corrected = {
+    imageUrl: "https://example.com/b.png",
+    additionalImageUrls: ["https://example.com/a.png"],
+  };
+  assert.deepEqual(validate(corrected, schema), {});
+});
+
+test("la limpieza de la galería conserva el orden y recorta cada URL", () => {
+  assert.deepEqual(
+    clean({
+      imageUrl: " https://example.com/main.png ",
+      additionalImageUrls: [
+        " https://example.com/b.png ",
+        "https://example.com/a.png ",
+      ],
+      isFeatured: false,
+    }),
+    {
+      imageUrl: "https://example.com/main.png",
+      additionalImageUrls: [
+        "https://example.com/b.png",
+        "https://example.com/a.png",
+      ],
+      isFeatured: false,
+    },
+  );
+});

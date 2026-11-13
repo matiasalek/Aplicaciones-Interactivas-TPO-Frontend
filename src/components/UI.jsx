@@ -215,7 +215,7 @@ export function Form({
     >
       <p className={s.formHint}>Los campos con * son obligatorios.</p>
       <fieldset disabled={pending} className={s.fieldset}>
-        {children({ field, values, setValues, errors })}
+        {children({ field, values, setValues, errors, setErrors })}
       </fieldset>
       {error && <Notice>{error.message}</Notice>}
       <Button type="submit" busy={pending}>

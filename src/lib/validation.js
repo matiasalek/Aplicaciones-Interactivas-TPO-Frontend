@@ -47,6 +47,12 @@ export const rules = {
     },
     description: text(10000),
     imageUrl: { ...text(2000), url: true },
+    additionalImageUrls: {
+      images: true,
+      max: 9,
+      distinctFrom: "imageUrl",
+      item: { ...text(2000), url: true },
+    },
     price: {
       required: true,
       number: true,
@@ -75,6 +81,36 @@ export const rules = {
 export function validate(values, schema) {
   const errors = {};
   for (const [key, rule] of Object.entries(schema)) {
+    if (rule.images) {
+      const urls = values[key] === undefined ? [] : values[key];
+      if (!Array.isArray(urls)) {
+        errors[key] = "Ingresá una lista de URLs de imágenes.";
+        continue;
+      }
+      if (urls.length > rule.max)
+        errors[key] = "Usá hasta 10 imágenes por producto.";
+      const seen = new Set();
+      try {
+        seen.add(new URL(values[rule.distinctFrom]).href);
+      } catch {
+        /* La principal se valida por separado. */
+      }
+      urls.forEach((url, index) => {
+        const name = `${key}.${index}`;
+        const failure =
+          typeof url === "string"
+            ? validate({ url }, { url: rule.item }).url
+            : "Ingresá una URL completa y válida.";
+        if (failure) errors[name] = failure;
+        else {
+          const normalized = new URL(url.trim()).href;
+          if (seen.has(normalized))
+            errors[name] = "Esta imagen ya está en la galería.";
+          seen.add(normalized);
+        }
+      });
+      continue;
+    }
     if (rule.boolean) {
       if (values[key] !== undefined && typeof values[key] !== "boolean")
         errors[key] = "Seleccioná una opción válida.";
@@ -147,6 +183,8 @@ export const clean = (values) =>
       typeof value === "string" &&
       !["password", "confirmPassword"].includes(key)
         ? value.trim()
-        : value,
+        : Array.isArray(value)
+          ? value.map((item) => (typeof item === "string" ? item.trim() : item))
+          : value,
     ]),
   );

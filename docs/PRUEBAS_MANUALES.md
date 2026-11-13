@@ -47,6 +47,18 @@ Iniciar la API y PostgreSQL, ejecutar `npm run dev` y abrir http://127.0.0.1:517
 8. Sin destacados, comprobar el estado vacío de Inicio y que el catálogo general siga disponible. Interrumpir la solicitud de destacados y reintentar: la sección informa el error sin bloquear el resto del inicio.
 9. Revisar Inicio y administración en 375, 768, 1024 y 1440 píxeles; las tablas se desplazan dentro de su contenedor, sin desbordar la página. Comprobar teclado, etiquetas y estados de los interruptores.
 
+## Galerías de imágenes
+
+1. Con la API detenida, aplicar `npm run db:migrate` en el backend y reiniciarla. Un producto anterior debe mantener su imagen como única principal, sin cambios en precio, disponibilidad, visibilidad o destacado.
+2. Crear un producto con tres URLs HTTP/HTTPS. Agregar filas y comprobar vistas previas. Probar una fila vacía, FTP y una URL repetida: deben mostrar errores por imagen y enfocar la primera inválida al enviar.
+3. Mover una imagen arriba y abajo. La primera debe quedar como principal. Guardar, recargar y comprobar todas las URLs y su orden.
+4. Abrir catálogo y destacados: deben usar la principal. Abrir el detalle, seleccionar miniaturas con clic y con Tab/Enter y comprobar el contador y el cambio de imagen.
+5. Probar una imagen inaccesible: debe mostrar la alternativa de categoría sin impedir elegir otras.
+6. Editar precio o visibilidad conservando las imágenes. Quitar una imagen intermedia y luego la principal: debe promoverse la primera restante. No se permite quitar la última.
+7. Agregar diez imágenes: debe deshabilitarse Agregar imagen. Eliminar una: debe volver a habilitarse. Comprobar que el servidor también rechace más de diez, colecciones vacías y URLs repetidas.
+8. Eliminar el producto con confirmación; comprobar que la API deje de devolverlo y no queden filas suyas en `product_images`. No se eliminan archivos en los sitios que alojan las URLs.
+9. Revisar detalle y editor en 375, 768, 1024 y 1440 píxeles, sin desborde de página. La fila de miniaturas puede desplazarse dentro de su contenedor.
+
 ## Recuperación
 
 1. Generar código para una cuenta existente.

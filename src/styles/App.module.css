@@ -766,6 +766,94 @@
   align-items: start;
   gap: 65px;
 }
+.productGallery {
+  min-width: 0;
+}
+.galleryThumbnails {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 8px 4px;
+  margin: 12px -4px 0;
+}
+.galleryThumbnail {
+  flex: 0 0 72px;
+  border: 2px solid #dce2d4;
+  border-radius: 6px;
+  padding: 3px;
+  background: #fff;
+}
+.galleryThumbnailSelected {
+  border-color: #476039;
+}
+.galleryThumbnail .productImage {
+  border-radius: 3px;
+}
+.galleryThumbnail img {
+  padding: 4px;
+}
+.galleryPosition {
+  color: #59694d;
+  font-size: 11px;
+  margin: 6px 0 0;
+}
+.imagesEditor {
+  min-width: 0;
+  border: 1px solid #dce2d4;
+  border-radius: 6px;
+  margin: 0;
+  padding: 18px;
+}
+.imagesEditor legend {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0 6px;
+}
+.imagesEditor > .formHint {
+  margin-bottom: 14px;
+}
+.imageEditorList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 18px;
+  display: grid;
+  gap: 18px;
+}
+.imageEditorRow {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px 14px;
+  border-bottom: 1px solid #e5e9dd;
+  padding-bottom: 18px;
+}
+.imageEditorRow:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.imageEditorRow .field {
+  min-width: 0;
+}
+.imageEditorPreview {
+  margin-top: 23px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.imageEditorPreview img {
+  padding: 4px;
+}
+.imageEditorActions {
+  grid-column: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.imageEditorFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
 .largeImage {
   aspect-ratio: 1;
   border: 1px solid #e6ebdd;

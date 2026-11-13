@@ -5,7 +5,12 @@ import { availability, money, safeWebUrl } from "../lib/api";
 import HardwareArt from "./HardwareArt";
 import s from "../styles/App.module.css";
 
-export function ProductImage({ product, large = false }) {
+export function ProductImage({
+  product,
+  large = false,
+  thumbnail = false,
+  alt = product.name,
+}) {
   const [failedUrl, setFailedUrl] = useState(null);
   const url = safeWebUrl(product.imageUrl);
   const illustrated =
@@ -15,12 +20,14 @@ export function ProductImage({ product, large = false }) {
       {illustrated ? (
         <>
           <HardwareArt category={product.category?.name} />
-          <span className={s.imageCaption}>Ilustración de categoría</span>
+          {!thumbnail && (
+            <span className={s.imageCaption}>Ilustración de categoría</span>
+          )}
         </>
       ) : (
         <img
           src={url}
-          alt={product.name}
+          alt={alt}
           loading="lazy"
           onError={() => setFailedUrl(url)}
         />

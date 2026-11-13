@@ -12,6 +12,8 @@ src/
     Dashboard.jsx             # Métricas, distribuciones y actualización manual
     FeaturedProducts.jsx      # Selección pública de destacados y estados de carga
     ProductCard.jsx           # Tarjetas, disponibilidad, destacado e imágenes
+    ProductGallery.jsx        # Imagen principal, miniaturas y selección pública
+    ProductImagesEditor.jsx   # URLs, vistas previas, orden y errores por imagen
     HardwareArt.jsx           # Ilustraciones vectoriales locales
   context/AuthContext.jsx     # Sesión y perfil autenticado
   lib/
@@ -49,6 +51,7 @@ flowchart TD
   Admin --> Productos[Listar / crear / editar / eliminar productos]
   Productos --> Visibilidad[Activar / desactivar]
   Productos --> Seleccion[Destacar / quitar destacado]
+  Productos --> Galeria[Agregar / ordenar / quitar imágenes]
   Admin --> Categorias[Listar / crear / editar / eliminar categorías]
   Admin --> Consultas[Listado de consultas]
   Consultas --> Consulta[Detalle / cambiar estado / eliminar]
@@ -84,6 +87,14 @@ Al salir de un campo hacia el botón de envío, el formulario realiza la validac
 `FeaturedProducts.jsx` consulta `/products?isFeatured=true&limit=4&sort=newest` con el hook cancelable existente. El enlace de la sección conduce a `/productos?isFeatured=true`; el catálogo conserva el filtro al buscar, ordenar, paginar y recargar. La selección se publica como `isFeatured` y se presenta en tarjetas y detalle.
 
 Los formularios y el interruptor administrativo envían booleanos JSON a los endpoints existentes de productos. PostgreSQL guarda `is_featured` con valor inicial `false`, agregado por la migración `006_add_featured_products.sql`. La API aplica conjuntamente el filtro de destacados y la condición de producto activo en las consultas públicas. La visibilidad y la selección se editan por separado; no hay selección automática ni dependencias nuevas.
+
+## Galerías de productos
+
+`ProductImagesEditor.jsx` integra la principal y las imágenes adicionales con el formulario: conserva nombres de campos propios para errores y foco, controla hasta diez URLs únicas y modifica el orden antes de guardar. Al enviar se forma `imageUrls`, un único arreglo ordenado; la primera entrada es la principal. Las URLs se recortan y validan antes del envío, y el servidor repite esas validaciones.
+
+`ProductGallery.jsx` muestra la imagen seleccionada con `ProductImage`, miniaturas accesibles y contador. Las alternativas de carga se aplican por imagen. Una sola imagen no agrega controles de selección. No hay carrusel automático ni dependencia adicional.
+
+La API mantiene `imageUrl` por compatibilidad y agrega `imageUrls` en listados y detalles. `product_images` guarda URL y posición por producto; la clave compuesta conserva posiciones únicas y la referencia al producto tiene eliminación en cascada. `products.image_url` mantiene la principal por compatibilidad y se actualiza en la misma transacción que la colección. Las ediciones bloquean la fila del producto para evitar colecciones mezcladas en escrituras simultáneas. La lectura usa una subconsulta agregada por producto, sin multiplicar filas ni alterar la paginación.
 
 ## Datos del dashboard
 

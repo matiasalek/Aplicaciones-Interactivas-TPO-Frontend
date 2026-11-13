@@ -46,6 +46,12 @@ Administración permite marcar y desmarcar productos destacados desde el listado
 
 El backend incorpora `isFeatured`, validaciones, filtro público/administrativo y una sexta migración SQL, también incluida en el script de creación. Los productos previos quedan sin destacar; el seed conserva las selecciones. Los inactivos permanecen ocultos públicamente aunque sean destacados. La selección es independiente de la disponibilidad y no tiene límite ni orden manual.
 
+## Extra implementado: múltiples imágenes por publicación
+
+Los productos admiten de una a diez URLs HTTP/HTTPS ordenadas, con principal en la primera posición. Administración permite agregar, quitar y reordenar con botones; valida cada URL, el límite y los duplicados. El detalle público presenta miniaturas seleccionables con mouse o teclado, posición actual y alternativa local ante fallos de carga. Las tarjetas usan la principal.
+
+La migración `007_create_product_images.sql` crea la relación de imágenes y conserva las existentes. Altas y ediciones se guardan en una transacción, con bloqueo de la fila al editar. El contrato anterior `imageUrl` sigue disponible junto a `imageUrls`; editar otros campos o repetir el seed conserva la galería. Eliminar un producto elimina sus imágenes en cascada. No se agregaron dependencias ni carga de archivos.
+
 ## Documentación de entrega
 
 - Descripción funcional: README y esta matriz.
@@ -60,7 +66,7 @@ El backend incorpora `isFeatured`, validaciones, filtro público/administrativo 
 - Tema: componentes para videojuegos. Marca: Pixel Forge Componentes.
 - Estética sobria y minimalista, exclusivamente modo claro.
 - Ejecución local; no se requiere publicación en Internet.
-- Se implementan todos los requisitos obligatorios. Se agregan el dashboard y los productos destacados como funcionalidades de puntaje extra; los demás extras quedan para una etapa opcional.
+- Se implementan todos los requisitos obligatorios. Se agregan el dashboard, los productos destacados y las múltiples imágenes como funcionalidades de puntaje extra; los demás extras quedan para una etapa opcional.
 - No se integra correo real. La recuperación se demuestra con el código devuelto en desarrollo/pruebas.
 - No se implementan carrito, pagos, envíos ni asistente de armado de PC.
-- El backend se amplía para persistir y filtrar productos destacados. Cada producto conserva una sola URL de imagen; múltiples imágenes figuran como extra en la consigna.
+- El backend se amplía para persistir y filtrar destacados y gestionar galerías de imágenes mediante URLs, sin carga de archivos ni proveedor externo de almacenamiento.
