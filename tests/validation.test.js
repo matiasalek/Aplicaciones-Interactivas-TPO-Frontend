@@ -1,6 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { clean, rules, validate } from "../src/lib/validation.js";
+import {
+  clean,
+  rules,
+  validate,
+  validatePriceRange,
+} from "../src/lib/validation.js";
 import { queryString, safeWebUrl } from "../src/lib/api.js";
 
 test("el registro valida todos los datos requeridos y la confirmación", () => {
@@ -354,5 +359,41 @@ test("la limpieza de la galería conserva el orden y recorta cada URL", () => {
       ],
       isFeatured: false,
     },
+  );
+});
+
+test("rango de precios admite límites opcionales, cero y valores iguales", () => {
+  for (const values of [
+    {},
+    { minPrice: "", maxPrice: "" },
+    { minPrice: "0" },
+    { maxPrice: "0" },
+    { minPrice: "0", maxPrice: "0" },
+    { minPrice: ".29", maxPrice: "0.29" },
+    { minPrice: " 10.50 ", maxPrice: "20" },
+    { maxPrice: "9999999999.99" },
+  ])
+    assert.deepEqual(validatePriceRange(values), {}, JSON.stringify(values));
+});
+
+test("rango de precios rechaza importes inválidos y mínimo mayor al máximo", () => {
+  for (const field of ["minPrice", "maxPrice"])
+    for (const value of [
+      "-1",
+      "1.001",
+      "1e3",
+      "0x10",
+      "NaN",
+      "Infinity",
+      "10000000000",
+      "1,50",
+    ])
+      assert.ok(
+        validatePriceRange({ [field]: value })[field],
+        `${field}: ${value}`,
+      );
+  assert.equal(
+    validatePriceRange({ minPrice: "20", maxPrice: "10" }).maxPrice,
+    "El precio máximo debe ser mayor o igual al mínimo.",
   );
 });

@@ -27,7 +27,7 @@ Si PostgreSQL o la API están detenidos, las pantallas muestran un error con la 
 
 ## Funcionalidad
 
-- Inicio, catálogo con búsqueda por texto, categoría, disponibilidad, orden y paginación.
+- Inicio, catálogo con búsqueda por texto, categoría, disponibilidad, precio mínimo/máximo, orden y paginación.
 - Detalle del producto con galería de imágenes, descripción, precio y disponibilidad; consulta con asunto precargado.
 - Información del comercio, dirección, teléfono, redes y horarios obtenidos de la API.
 - Formulario de contacto persistido en PostgreSQL.
@@ -41,6 +41,8 @@ Si PostgreSQL o la API están detenidos, las pantallas muestran un error con la 
 - Validaciones locales alineadas con los contratos del backend, estados de carga, errores y confirmaciones de eliminación.
 
 La identidad visual es Pixel Forge Componentes; el nombre institucional y los datos publicados se gestionan en Administración → Información del comercio.
+
+En Componentes, **Precio mínimo (ARS)** y **Precio máximo (ARS)** son opcionales. Pulsar **Aplicar precio** para filtrar; se incluyen ambos extremos y se puede completar uno solo. Se admiten importes no negativos con hasta dos decimales y el mínimo no puede superar al máximo. El rango se conserva en la URL al buscar, cambiar otros filtros, ordenar, paginar y recargar. Aplicar un rango vuelve a la primera página; **Limpiar filtros** también elimina los límites de precio.
 
 ## Dashboard administrativo
 

@@ -33,7 +33,7 @@ import {
 } from "../components/UI";
 import { api, availability, money, queryString, safeWebUrl } from "../lib/api";
 import { useMutation, useResource } from "../lib/hooks";
-import { rules, validate } from "../lib/validation";
+import { rules, validate, validatePriceRange } from "../lib/validation";
 import s from "../styles/App.module.css";
 
 export function HomePage() {
@@ -210,13 +210,28 @@ export function CatalogPage() {
   );
   const [search, setSearch] = useState(q);
   const isFeatured = params.get("isFeatured") === "true" ? "true" : "";
+  const minPrice = (params.get("minPrice") || "").trim();
+  const maxPrice = (params.get("maxPrice") || "").trim();
+  const [prices, setPrices] = useState({ minPrice, maxPrice });
+  const [priceErrors, setPriceErrors] = useState(() =>
+    validatePriceRange({ minPrice, maxPrice }),
+  );
+  const validPriceRange = !Object.keys(
+    validatePriceRange({ minPrice, maxPrice }),
+  ).length;
+  useEffect(() => {
+    setPrices({ minPrice, maxPrice });
+    setPriceErrors(validatePriceRange({ minPrice, maxPrice }));
+  }, [minPrice, maxPrice]);
   useEffect(() => {
     setSearch(q);
   }, [q, categoryId, stock, sort, page, isFeatured]);
   const [searchError, setSearchError] = useState("");
   const categories = useResource("/categories");
   const products = useResource(
-    `/products?${queryString({ q, categoryId, availability: stock, isFeatured, sort, page, limit: 12 })}`,
+    validPriceRange
+      ? `/products?${queryString({ q, categoryId, availability: stock, isFeatured, minPrice, maxPrice, sort, page, limit: 12 })}`
+      : null,
   );
   function update(values) {
     setParams(
@@ -225,13 +240,15 @@ export function CatalogPage() {
         categoryId,
         availability: stock,
         isFeatured,
+        minPrice,
+        maxPrice,
         sort,
         ...values,
         page: values.page || 1,
       }),
     );
   }
-  const active = q || categoryId || stock || isFeatured;
+  const active = q || categoryId || stock || isFeatured || minPrice || maxPrice;
   return (
     <div className={s.container}>
       <PageHeading
@@ -245,19 +262,21 @@ export function CatalogPage() {
             <SlidersHorizontal size={17} />
             Filtrá tu búsqueda
           </h2>
-          <label htmlFor="category-filter">Categoría</label>
-          <select
-            id="category-filter"
-            value={categoryId}
-            onChange={(event) => update({ categoryId: event.target.value })}
-          >
-            <option value="">Todas las categorías</option>
-            {categories.data?.data.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+          <div className={s.catalogFilter}>
+            <label htmlFor="category-filter">Categoría</label>
+            <select
+              id="category-filter"
+              value={categoryId}
+              onChange={(event) => update({ categoryId: event.target.value })}
+            >
+              <option value="">Todas las categorías</option>
+              {categories.data?.data.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
           {categories.error && (
             <>
               <Notice>{categories.error.message}</Notice>
@@ -266,34 +285,103 @@ export function CatalogPage() {
               </Button>
             </>
           )}
-          <label htmlFor="availability-filter">Disponibilidad</label>
-          <select
-            id="availability-filter"
-            value={stock}
-            onChange={(event) => update({ availability: event.target.value })}
+          <div className={s.catalogFilter}>
+            <label htmlFor="availability-filter">Disponibilidad</label>
+            <select
+              id="availability-filter"
+              value={stock}
+              onChange={(event) => update({ availability: event.target.value })}
+            >
+              <option value="">Todos los estados</option>
+              {Object.entries(availability).map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={`${s.catalogFilter} ${s.selectionFilter}`}>
+            <label htmlFor="featured-filter">Selección</label>
+            <select
+              id="featured-filter"
+              value={isFeatured}
+              onChange={(event) => update({ isFeatured: event.target.value })}
+            >
+              <option value="">Todos los componentes</option>
+              <option value="true">Solo destacados</option>
+            </select>
+          </div>
+          <form
+            className={s.priceFilters}
+            aria-label="Filtrar por precio"
+            noValidate
+            onSubmit={(event) => {
+              event.preventDefault();
+              const errors = validatePriceRange(prices);
+              setPriceErrors(errors);
+              const first = Object.keys(errors)[0];
+              if (first) {
+                event.currentTarget.elements.namedItem(first)?.focus();
+                return;
+              }
+              update({
+                minPrice: prices.minPrice.trim()
+                  ? String(Number(prices.minPrice))
+                  : "",
+                maxPrice: prices.maxPrice.trim()
+                  ? String(Number(prices.maxPrice))
+                  : "",
+              });
+            }}
           >
-            <option value="">Todos los estados</option>
-            {Object.entries(availability).map(([key, label]) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
+            {[
+              ["minPrice", "Precio mínimo (ARS)"],
+              ["maxPrice", "Precio máximo (ARS)"],
+            ].map(([name, label]) => (
+              <div key={name}>
+                <label htmlFor={`${name}-filter`}>{label}</label>
+                <input
+                  id={`${name}-filter`}
+                  name={name}
+                  type="number"
+                  inputMode="decimal"
+                  min="0"
+                  max="9999999999.99"
+                  step="0.01"
+                  value={prices[name]}
+                  onChange={(event) => {
+                    const next = { ...prices, [name]: event.target.value };
+                    setPrices(next);
+                    if (Object.keys(priceErrors).length)
+                      setPriceErrors(validatePriceRange(next));
+                  }}
+                  aria-invalid={!!priceErrors[name]}
+                  aria-describedby={
+                    priceErrors[name] ? `${name}-error` : "price-filter-hint"
+                  }
+                />
+                {priceErrors[name] && (
+                  <span id={`${name}-error`} className={s.fieldError}>
+                    {priceErrors[name]}
+                  </span>
+                )}
+              </div>
             ))}
-          </select>
-          <label htmlFor="featured-filter">Selección</label>
-          <select
-            id="featured-filter"
-            value={isFeatured}
-            onChange={(event) => update({ isFeatured: event.target.value })}
-          >
-            <option value="">Todos los componentes</option>
-            <option value="true">Solo destacados</option>
-          </select>
+            <p id="price-filter-hint" className={s.formHint}>
+              Podés dejar uno o ambos campos vacíos.
+            </p>
+            <Button type="submit" variant="secondary">
+              Aplicar precio
+            </Button>
+          </form>
           {active && (
             <Button
               variant="ghost"
               onClick={() => {
                 setSearch("");
                 setSearchError("");
+                setPrices({ minPrice: "", maxPrice: "" });
+                setPriceErrors({});
                 setParams({});
               }}
             >
@@ -332,48 +420,57 @@ export function CatalogPage() {
             <Button type="submit">Buscar</Button>
           </form>
           {searchError && <Notice>{searchError}</Notice>}
-          <div className={s.resultToolbar}>
-            <span aria-live="polite">
-              {products.loading
-                ? "Buscando componentes…"
-                : `${products.data?.meta.total ?? 0} componentes${q ? ` para “${q}”` : ""}`}
-            </span>
-            <label>
-              Ordenar por{" "}
-              <select
-                value={sort}
-                onChange={(event) => update({ sort: event.target.value })}
-                aria-label="Ordenar productos"
-              >
-                {Object.entries(sortOptions).map(([key, label]) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <ResourceState resource={products}>
-            {products.data?.data.length ? (
-              <div className={`${s.productGrid} ${s.catalogGrid}`}>
-                {products.data.data.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+          {!validPriceRange ? (
+            <Notice>
+              Corregí el rango de precios y pulsá Aplicar precio para ver los
+              resultados.
+            </Notice>
+          ) : (
+            <>
+              <div className={s.resultToolbar}>
+                <span aria-live="polite">
+                  {products.loading
+                    ? "Buscando componentes…"
+                    : `${products.data?.meta.total ?? 0} componentes${q ? ` para “${q}”` : ""}`}
+                </span>
+                <label>
+                  Ordenar por{" "}
+                  <select
+                    value={sort}
+                    onChange={(event) => update({ sort: event.target.value })}
+                    aria-label="Ordenar productos"
+                  >
+                    {Object.entries(sortOptions).map(([key, label]) => (
+                      <option key={key} value={key}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               </div>
-            ) : (
-              <Empty title="No encontramos componentes">
-                Probá con otra búsqueda o quitá los filtros.
-                {page > 1 && " También podés volver a la primera página."}
-              </Empty>
-            )}
-            <Pagination
-              page={page}
-              total={products.data?.meta.total || 0}
-              limit={12}
-              count={products.data?.data.length || 0}
-              onChange={(page) => update({ page })}
-            />
-          </ResourceState>
+              <ResourceState resource={products}>
+                {products.data?.data.length ? (
+                  <div className={`${s.productGrid} ${s.catalogGrid}`}>
+                    {products.data.data.map((product) => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
+                  </div>
+                ) : (
+                  <Empty title="No encontramos componentes">
+                    Probá con otra búsqueda o quitá los filtros.
+                    {page > 1 && " También podés volver a la primera página."}
+                  </Empty>
+                )}
+                <Pagination
+                  page={page}
+                  total={products.data?.meta.total || 0}
+                  limit={12}
+                  count={products.data?.data.length || 0}
+                  onChange={(page) => update({ page })}
+                />
+              </ResourceState>
+            </>
+          )}
         </div>
       </div>
     </div>

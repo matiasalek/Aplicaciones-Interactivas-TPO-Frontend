@@ -81,3 +81,16 @@ Se implementaron galerías mediante URLs en ambos proyectos. La verificación ut
 - Se revisaron capturas del detalle y editor en 375 y 1440 píxeles; sin desborde de página también en 768 y 1024. Las comprobaciones axe incluidas del detalle y editor no detectaron violaciones; no constituyen una auditoría completa de accesibilidad.
 
 Build y formato aprobados. Los servicios temporales se detuvieron al finalizar. No se agregaron dependencias y las capturas permanecen ignoradas. Para actualizar una instalación anterior, detener la API, ejecutar `npm run db:migrate` desde el backend y reiniciarla; no recrear la base.
+
+## Rango de precios — 13 de noviembre de 2026
+
+La ampliación acordada agrega únicamente precio mínimo y máximo opcionales al catálogo. Se verificó con Node.js 24.20.0, Chromium y PostgreSQL 17 temporal en 55489, bases separadas `pixel_forge_price_range_integration` y `pixel_forge_price_range_e2e`, y API temporal en 3006. No se utilizó la base de demostración.
+
+- Frontend: 23 pruebas unitarias y 15 de navegador aprobadas, incluidos todos los recorridos anteriores.
+- Backend: 28 pruebas rápidas y 31 de integración aprobadas, con filtros públicos y administrativos sobre PostgreSQL real.
+- Límites inclusivos, un solo extremo, ambos vacíos, valores iguales, cero, centavos, máximo permitido y resultados vacíos. Composición con texto, categoría, disponibilidad, destacados, visibilidad, orden y paginación; los totales corresponden al rango filtrado.
+- Se rechazan negativos, importes fuera de rango, decimales adicionales, formatos inválidos y mínimo mayor al máximo. La API también rechaza parámetros repetidos. Los errores locales impiden consultas inválidas y enfocan el primer campo con error.
+- El navegador conserva los límites en la URL al recargar, retroceder, ordenar o paginar. Aplicar precio reinicia la página y limpiar filtros elimina ambos extremos. Una URL con rango inválido muestra cómo corregirlo sin consultar productos.
+- Capturas del catálogo revisadas en 375 y 1440 píxeles; etiquetas y controles agrupados también en móvil. Sin desborde horizontal en 375, 768, 1024 y 1440. La comprobación axe incluida no detectó violaciones; no constituye una auditoría completa de accesibilidad.
+
+Build y formato aprobados. Los servicios temporales quedaron detenidos. No se agregaron dependencias ni migraciones; basta reiniciar la API y el frontend para utilizar la ampliación. Capturas y registros locales siguen excluidos de Git.

@@ -10,6 +10,8 @@ Iniciar la API y PostgreSQL, ejecutar `npm run dev` y abrir http://127.0.0.1:517
 4. Abrir un producto: comprobar todos sus datos y que el enlace de consulta precarga el asunto.
 5. Enviar contacto vacío: comprobar validaciones locales y foco en el primer campo inválido. Probar correo inválido y teléfono opcional vacío.
 6. Enviar una consulta válida y verificar confirmación. Comprobar su existencia desde administración.
+7. Aplicar precio mínimo/máximo, uno solo y ambos iguales; comprobar límites inclusivos y combinaciones con búsqueda, categoría, disponibilidad y orden. Aplicar desde la segunda página debe volver a la primera; paginar y recargar deben conservar el rango.
+8. Probar importes negativos, más de dos decimales y mínimo mayor al máximo: deben mostrarse errores sin aplicar la búsqueda. Abrir una URL con rango invertido y corregirla desde el formulario. Limpiar filtros debe vaciar ambos precios y restaurar el catálogo.
 
 ## Sesión y administración
 

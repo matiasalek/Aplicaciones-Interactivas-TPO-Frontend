@@ -76,6 +76,8 @@ flowchart LR
 
 Los GET se cancelan cuando cambia la pantalla o los filtros para evitar respuestas antiguas. Las mutaciones deshabilitan controles durante el envío y bloquean solicitudes duplicadas. Los errores de negocio se traducen a mensajes en español; la validación local no reemplaza las restricciones de la API ni de PostgreSQL.
 
+El catálogo conserva `minPrice` y `maxPrice` en la URL. Los importes se editan localmente y se aplican al enviar el formulario de precio; `validatePriceRange` controla formato, límites y relación entre ambos. Una URL con rango inválido muestra el error sin consultar productos. El backend admite esos parámetros en los listados público y administrativo y aplica condiciones SQL parametrizadas inclusivas antes de ordenar y paginar. No se requieren cambios de esquema ni dependencias.
+
 Los formularios tienen etiquetas, errores asociados, foco en el primer error y feedback de envío. La navegación incluye enlace para saltar al contenido y foco en el contenido al cambiar de ruta. El diálogo nativo de confirmación captura el foco y permite Escape cuando no hay una operación en curso. Se respeta la preferencia de reducir animaciones.
 
 Las reglas locales de correo, teléfono, URLs y precisión del precio están alineadas con los contratos del servidor. El backend reutiliza esquemas comunes para correo, teléfono y URLs; valida números JSON sin convertir nulos o booleanos. Las contraseñas nuevas se comprueban también por su longitud UTF-8 para impedir truncamiento. La confirmación de contraseña queda en la interfaz y las comprobaciones de unicidad, relaciones y autorización siguen en el servidor.

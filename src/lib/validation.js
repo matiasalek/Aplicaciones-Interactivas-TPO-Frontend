@@ -12,6 +12,13 @@ const password = {
   preserve: true,
 };
 const profile = { firstName: text(100), lastName: text(100), email, phone };
+const priceFilter = {
+  number: true,
+  minNumber: 0,
+  maxNumber: 9999999999.99,
+  currency: true,
+  decimal: true,
+};
 export const rules = {
   login: { email, password: { required: true, preserve: true } },
   register: {
@@ -76,6 +83,7 @@ export const rules = {
     website: { url: true, max: 2000 },
   },
   search: { q: text(100, 0) },
+  priceRange: { minPrice: priceFilter, maxPrice: priceFilter },
 };
 
 export function validate(values, schema) {
@@ -145,6 +153,8 @@ export function validate(values, schema) {
         "Ingresá un código de recuperación válido de 64 caracteres.";
     else if (rule.oneOf && !rule.oneOf.includes(value))
       errors[key] = "Seleccioná una opción válida.";
+    else if (rule.decimal && !/^(?:\d+(?:\.\d{1,2})?|\.\d{1,2})$/.test(value))
+      errors[key] = "Ingresá un precio válido con hasta dos decimales.";
     else if (
       rule.number &&
       ((typeof values[key] !== "string" && typeof values[key] !== "number") ||
@@ -173,6 +183,18 @@ export function validate(values, schema) {
       }
     }
   }
+  return errors;
+}
+
+export function validatePriceRange(values) {
+  const errors = validate(values, rules.priceRange);
+  if (
+    !Object.keys(errors).length &&
+    String(values.minPrice ?? "").trim() &&
+    String(values.maxPrice ?? "").trim() &&
+    Number(values.minPrice) > Number(values.maxPrice)
+  )
+    errors.maxPrice = "El precio máximo debe ser mayor o igual al mínimo.";
   return errors;
 }
 

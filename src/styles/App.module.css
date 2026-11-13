@@ -682,6 +682,19 @@
   border-radius: 6px;
   color: #59694d;
 }
+.priceFilters input {
+  font-size: 11px;
+}
+.catalogFilter {
+  min-width: 0;
+}
+.priceFilters .fieldError {
+  display: block;
+  margin-top: 8px;
+}
+.priceFilters > .formHint {
+  margin-top: 10px;
+}
 .filterHelp h3 {
   font-size: 13px;
   margin-top: 15px;
@@ -2146,10 +2159,23 @@
     margin-bottom: 5px;
   }
   .filters label {
-    margin: 0;
+    margin: 0 0 8px;
   }
-  .filters select {
-    grid-row: 3;
+  .selectionFilter,
+  .filters > .button,
+  .filters > .notice {
+    grid-column: 1 / -1;
+  }
+  .priceFilters {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 15px;
+  }
+  .priceFilters > .formHint,
+  .priceFilters > .button {
+    grid-column: 1 / -1;
+    margin: 0;
   }
   .filterHelp {
     display: none;
