@@ -118,6 +118,7 @@ export function PublicLayout() {
             <Link to="/productos">Componentes</Link>
             <Link to="/nosotros">El comercio</Link>
             <Link to="/contacto">Hacé tu consulta</Link>
+            <Link to="/creditos-imagenes">Créditos de imágenes</Link>
           </div>
           <div>
             <h2>Encontranos</h2>

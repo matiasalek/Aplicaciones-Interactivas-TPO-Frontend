@@ -6,6 +6,7 @@ Iniciar la API y PostgreSQL, ejecutar `npm run dev` y abrir http://127.0.0.1:517
 
 1. Recorrer Inicio, Componentes, Nosotros y Contacto.
 2. Verificar las seis categorías y al menos veinte productos iniciales con la API preparada.
+   Comprobar las fotos en el catálogo y en el detalle y abrir **Créditos de imágenes** desde el pie.
 3. Buscar `Ryzen`, cambiar categoría, disponibilidad y orden. Avanzar y retroceder páginas; recargar y comprobar que la URL conserva los filtros.
 4. Abrir un producto: comprobar todos sus datos y que el enlace de consulta precarga el asunto.
 5. Enviar contacto vacío: comprobar validaciones locales y foco en el primer campo inválido. Probar correo inválido y teléfono opcional vacío.

@@ -68,12 +68,26 @@ test("catálogo real, búsqueda, filtros, paginación, detalle y validaciones de
   ).toBeVisible();
   await page.reload();
   await expect(page.getByLabel("Buscar componentes")).toHaveValue("Ryzen");
+  const photo = page.getByRole("img", {
+    name: "AMD Ryzen 5 7600",
+    exact: true,
+  });
+  await expect(photo).toHaveAttribute(
+    "src",
+    "/api/v1/media/products/ryzen-5-7600.webp",
+  );
+  await expect
+    .poll(() => photo.evaluate((image) => image.naturalWidth))
+    .toBeGreaterThan(0);
   await page
     .getByRole("heading", { name: "AMD Ryzen 5 7600", exact: true })
     .click();
   await expect(
     page.getByRole("heading", { name: "AMD Ryzen 5 7600", exact: true }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("img", { name: "AMD Ryzen 5 7600, imagen 1 de 1" }),
+  ).toHaveAttribute("src", "/api/v1/media/products/ryzen-5-7600.webp");
   await page.getByRole("link", { name: "Consultar por este producto" }).click();
   await expect(page.getByLabel("Asunto")).toHaveValue(
     "Consulta por AMD Ryzen 5 7600",
@@ -81,6 +95,11 @@ test("catálogo real, búsqueda, filtros, paginación, detalle y validaciones de
   await page.getByRole("button", { name: "Enviar consulta" }).click();
   await expect(page.getByLabel("Nombre", { exact: false })).toBeFocused();
   await expect(page.getByText("Completá este campo.").first()).toBeVisible();
+  await page.getByRole("link", { name: "Créditos de imágenes" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Créditos de imágenes" }),
+  ).toBeVisible();
+  await expect(page.getByRole("row")).toHaveCount(21);
   expect(errors).toEqual([]);
 });
 

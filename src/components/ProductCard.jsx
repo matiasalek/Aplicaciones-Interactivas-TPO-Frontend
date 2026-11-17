@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { ArrowUpRight, Star, Tag } from "lucide-react";
 import { Link } from "react-router";
-import { availability, money, safeWebUrl } from "../lib/api";
+import { availability, money } from "../lib/api";
+import { productImageSource } from "../lib/productImages";
 import HardwareArt from "./HardwareArt";
 import s from "../styles/App.module.css";
 
@@ -12,9 +13,8 @@ export function ProductImage({
   alt = product.name,
 }) {
   const [failedUrl, setFailedUrl] = useState(null);
-  const url = safeWebUrl(product.imageUrl);
-  const illustrated =
-    !url || failedUrl === url || new URL(url).hostname === "placehold.co";
+  const url = productImageSource(product.imageUrl);
+  const illustrated = !url || failedUrl === url;
   return (
     <div className={`${s.productImage} ${large ? s.largeImage : ""}`}>
       {illustrated ? (

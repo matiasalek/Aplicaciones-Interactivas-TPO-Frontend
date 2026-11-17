@@ -6,7 +6,7 @@ La fuente de verdad es **TPO Segundo Cuatrimestre 2026.pdf**, conservado sin cam
 
 ## Ejecución local
 
-Requisitos: Node.js 24 (`.node-version`), npm y el backend actualizado con PostgreSQL, sus ocho migraciones y su carga inicial de al menos 20 productos.
+Requisitos: Node.js 24 (`.node-version`), npm y el backend actualizado con PostgreSQL, sus nueve migraciones y su carga inicial de al menos 20 productos.
 
 1. Iniciar PostgreSQL y la API siguiendo el README del backend. La API debe escuchar en `http://localhost:3000`.
 2. En este repositorio:
@@ -21,7 +21,7 @@ Requisitos: Node.js 24 (`.node-version`), npm y el backend actualizado con Postg
 
 No es necesario agregar CORS: el servidor de Vite reenvía `/api` al backend. Si la API escucha en otro puerto, copiar `.env.example` a `.env` y ajustar `API_TARGET`; reiniciar Vite después. No se necesita publicar el proyecto.
 
-Si ya tenías el backend anterior, detené la API, ejecutá `npm run db:migrate` desde su carpeta `backend/` y reiniciala antes de usar esta versión. Las migraciones de destacados y galería conservan los datos existentes. `007_create_product_images.sql` incorpora la imagen actual de cada producto como primera imagen de su galería.
+Si ya tenías el backend anterior, detené la API, ejecutá `npm run db:migrate` desde su carpeta `backend/` y reiniciala antes de usar esta versión. La migración 009 incorpora las fotos locales a los ejemplos del catálogo que siguen con su imagen original.
 
 Si PostgreSQL o la API están detenidos, las pantallas muestran un error con la posibilidad de reintentar. No se sustituyen los datos reales por datos ficticios.
 
@@ -107,7 +107,9 @@ Las rutas privadas del frontend son una ayuda de navegación; la autorización e
 
 ## Imágenes y enlaces
 
-Los productos utilizan URLs HTTP/HTTPS para su galería. Si una imagen falla o el seed utiliza `placehold.co`, se muestra una ilustración vectorial local de la categoría, identificada como tal en la vista principal; no se presenta como fotografía del modelo. Las demás imágenes siguen disponibles. Las imágenes personalizadas se muestran normalmente. Las redes se abren en otra pestaña y se filtran para permitir solamente HTTP/HTTPS.
+Los veinte ejemplos cargados desde cero incluyen fotografías o fotogramas de los modelos correspondientes, optimizados en WebP y servidos por el backend. En el pie se accede a **Créditos de imágenes**, con la fuente, autoría, licencia y adaptación. La galería conserva esas fotos locales y admite imágenes personalizadas mediante URLs HTTP/HTTPS. Si falla una imagen, se muestra una ilustración de la categoría identificada como tal. Las demás imágenes siguen disponibles.
+
+En una instalación anterior, la migración 009 actualiza los ejemplos que conservan su imagen inicial. Mantiene las galerías personalizadas. Algunos modelos de ejemplo cambian para que el producto y la foto coincidan.
 
 La tipografía usa fuentes web de Google con alternativas del sistema; si no hay Internet se utilizan las alternativas. Las ilustraciones e íconos se incluyen en el frontend.
 
@@ -121,7 +123,7 @@ La tipografía usa fuentes web de Google con alternativas del sistema; si no hay
 | `npm test`         | Pruebas unitarias de validaciones y utilidades.     |
 | `npm run test:e2e` | Pruebas de navegador con Chromium y API real.       |
 
-Para las pruebas de navegador, instalar Chromium una vez con `npx playwright install chromium`. Estas pruebas **crean, modifican y eliminan sus propios registros**. Usar una instancia de backend conectada a una base exclusiva de pruebas con las ocho migraciones y el seed cargado, nunca la base de demostración. El frontend de las pruebas se inicia automáticamente en 5173; `API_TARGET` determina el backend usado.
+Para las pruebas de navegador, instalar Chromium una vez con `npx playwright install chromium`. Estas pruebas **crean, modifican y eliminan sus propios registros**. Usar una instancia de backend conectada a una base exclusiva de pruebas con las nueve migraciones y el seed cargado, nunca la base de demostración. El frontend de las pruebas se inicia automáticamente en 5173; `API_TARGET` determina el backend usado.
 
 ```bash
 API_TARGET=http://127.0.0.1:3001 E2E_ALLOW_WRITES=1 npm run test:e2e

@@ -60,7 +60,8 @@ export default function ProductImagesEditor({
     >
       <legend>Imágenes del producto</legend>
       <p id={`${id}-hint`} className={s.formHint}>
-        De 1 a 10 URLs públicas HTTP/HTTPS. La primera es la imagen principal.
+        De 1 a 10 imágenes. Podés conservar las fotos del catálogo o ingresar
+        URLs HTTP/HTTPS. La primera es la imagen principal.
       </p>
       <ol className={s.imageEditorList}>
         {urls.map((url, index) => {
@@ -96,7 +97,7 @@ export default function ProductImagesEditor({
                   }}
                   id={inputId}
                   name={name}
-                  type="url"
+                  inputMode="url"
                   required
                   maxLength={2000}
                   placeholder="https://…"

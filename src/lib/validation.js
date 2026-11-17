@@ -1,4 +1,7 @@
+import { imageReferenceKey, isCatalogImage } from "./productImages.js";
+
 const text = (max, min = 1) => ({ required: min > 0, max, min });
+const productImage = { ...text(2000), url: true, catalogImage: true };
 // Mismo formato práctico que z.email() en el backend.
 const emailPattern =
   /^(?:[A-Za-z0-9_'+\-]+\.)*[A-Za-z0-9_'+\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/;
@@ -59,12 +62,12 @@ export const rules = {
       integer: true,
     },
     description: text(10000),
-    imageUrl: { ...text(2000), url: true },
+    imageUrl: productImage,
     additionalImageUrls: {
       images: true,
       max: 9,
       distinctFrom: "imageUrl",
-      item: { ...text(2000), url: true },
+      item: productImage,
     },
     price: {
       required: true,
@@ -105,7 +108,7 @@ export function validate(values, schema) {
         errors[key] = "Usá hasta 10 imágenes por producto.";
       const seen = new Set();
       try {
-        seen.add(new URL(values[rule.distinctFrom]).href);
+        seen.add(imageReferenceKey(values[rule.distinctFrom]));
       } catch {
         /* La principal se valida por separado. */
       }
@@ -117,7 +120,7 @@ export function validate(values, schema) {
             : "Ingresá una URL completa y válida.";
         if (failure) errors[name] = failure;
         else {
-          const normalized = new URL(url.trim()).href;
+          const normalized = imageReferenceKey(url);
           if (seen.has(normalized))
             errors[name] = "Esta imagen ya está en la galería.";
           seen.add(normalized);
@@ -182,7 +185,7 @@ export function validate(values, schema) {
       errors[key] = "Usá como máximo dos decimales.";
     else if (rule.matches && raw !== values[rule.matches])
       errors[key] = "Las contraseñas no coinciden.";
-    else if (rule.url) {
+    else if (rule.url && !(rule.catalogImage && isCatalogImage(value))) {
       try {
         if (
           !/^https?:\/\//i.test(value) ||

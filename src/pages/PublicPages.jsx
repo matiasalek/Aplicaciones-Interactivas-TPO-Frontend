@@ -741,6 +741,46 @@ export function ContactPage() {
   );
 }
 
+export function ImageCreditsPage() {
+  const credits = useResource("/media/products/credits.json");
+  return (
+    <div className={s.container}>
+      <PageHeading
+        title="Créditos de imágenes"
+        description="Las imágenes del catálogo inicial se adaptaron al formato WebP. Cada archivo conserva la licencia indicada."
+      />
+      <ResourceState resource={credits}>
+        <div className={s.tableWrap}>
+          <table>
+            <thead>
+              <tr>
+                <th>Producto y fuente</th>
+                <th>Autoría</th>
+                <th>Licencia</th>
+                <th>Adaptación</th>
+              </tr>
+            </thead>
+            <tbody>
+              {credits.data?.data.map((image) => (
+                <tr key={image.product}>
+                  <td>
+                    <a href={image.source}>{image.product}</a>
+                  </td>
+                  <td>{image.author}</td>
+                  <td>
+                    <a href={image.licenseUrl}>{image.license}</a>
+                  </td>
+                  <td>{image.changes}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </ResourceState>
+    </div>
+  );
+}
+
 export function NotFoundPage() {
   return (
     <div className={s.container}>

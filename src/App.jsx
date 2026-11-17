@@ -8,6 +8,7 @@ import {
   ProductPage,
   AboutPage,
   ContactPage,
+  ImageCreditsPage,
   NotFoundPage,
 } from "./pages/PublicPages";
 import {
@@ -78,6 +79,7 @@ export default function App() {
           <Route path="productos/:id" element={<ProductPage />} />
           <Route path="nosotros" element={<AboutPage />} />
           <Route path="contacto" element={<ContactPage />} />
+          <Route path="creditos-imagenes" element={<ImageCreditsPage />} />
           <Route path="ingresar" element={<LoginPage />} />
           <Route path="registrarse" element={<LoginPage register />} />
           <Route path="recuperar-contrasena" element={<ForgotPasswordPage />} />
