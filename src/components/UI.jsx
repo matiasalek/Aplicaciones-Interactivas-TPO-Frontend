@@ -132,11 +132,12 @@ export function Form({
     const id = `${formId}-${name}`;
     const { multiline, options, hint, ...inputProps } = props;
     const Component = multiline ? "textarea" : options ? "select" : "input";
+    const required = inputProps.required ?? schema[name]?.required;
     return (
       <div className={s.field} key={name}>
         <label htmlFor={id}>
           {label}
-          {schema[name]?.required && (
+          {required && (
             <span className={s.required} aria-hidden="true">
               {" "}
               *
@@ -147,7 +148,7 @@ export function Form({
           id={id}
           name={name}
           value={values[name] ?? ""}
-          required={schema[name]?.required || undefined}
+          required={required || undefined}
           maxLength={schema[name]?.max}
           {...inputProps}
           onChange={(event) => {

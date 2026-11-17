@@ -61,6 +61,13 @@ Iniciar la API y PostgreSQL, ejecutar `npm run dev` y abrir http://127.0.0.1:517
 8. Eliminar el producto con confirmación; comprobar que la API deje de devolverlo y no queden filas suyas en `product_images`. No se eliminan archivos en los sitios que alojan las URLs.
 9. Revisar detalle y editor en 375, 768, 1024 y 1440 píxeles, sin desborde de página. La fila de miniaturas puede desplazarse dentro de su contenedor.
 
+## Promociones y novedades
+
+1. Crear una novedad en borrador y comprobar que no aparezca en Inicio. Publicarla y comprobar el título y el texto.
+2. Crear una promoción con producto. Probar un precio igual al habitual y luego uno menor. Publicarla y comprobar el precio habitual tachado, el promocional y la etiqueta Oferta en el catálogo y el detalle.
+3. Aplicar un límite de precio que incluya la oferta pero excluya el precio habitual. Ordenar por precio y comprobar la posición del producto.
+4. Intentar publicar otra oferta para el mismo producto. Volver la primera a borrador y comprobar que se restaura el precio habitual. Eliminar la publicación.
+
 ## Recuperación
 
 1. Generar código para una cuenta existente.

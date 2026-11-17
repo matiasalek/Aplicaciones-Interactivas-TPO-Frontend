@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowUpRight, Star } from "lucide-react";
+import { ArrowUpRight, Star, Tag } from "lucide-react";
 import { Link } from "react-router";
 import { availability, money, safeWebUrl } from "../lib/api";
 import HardwareArt from "./HardwareArt";
@@ -51,6 +51,29 @@ export function FeaturedBadge() {
     </span>
   );
 }
+export function OfferBadge() {
+  return (
+    <span className={s.offerBadge}>
+      <Tag size={13} aria-hidden="true" />
+      Oferta
+    </span>
+  );
+}
+export function ProductPrice({ product, className = s.price }) {
+  const onOffer = product.promotionPrice != null;
+  return (
+    <p className={className}>
+      {onOffer && (
+        <>
+          <span className={s.srOnly}>Precio habitual</span>
+          <s className={s.oldPrice}>{money(product.price)}</s>
+          <span className={s.srOnly}>Precio promocional</span>
+        </>
+      )}
+      {money(product.effectivePrice ?? product.promotionPrice ?? product.price)}
+    </p>
+  );
+}
 export default function ProductCard({ product }) {
   return (
     <article className={s.productCard}>
@@ -65,8 +88,9 @@ export default function ProductCard({ product }) {
           <div className={s.productBadges}>
             <AvailabilityBadge value={product.availability} />
             {product.isFeatured && <FeaturedBadge />}
+            {product.promotionPrice != null && <OfferBadge />}
           </div>
-          <p className={s.price}>{money(product.price)}</p>
+          <ProductPrice product={product} />
         </div>
       </Link>
     </article>

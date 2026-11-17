@@ -52,6 +52,10 @@ Los productos admiten de una a diez URLs HTTP/HTTPS ordenadas, con principal en 
 
 La migración `007_create_product_images.sql` crea la relación de imágenes y conserva las existentes. Altas y ediciones se guardan en una transacción, con bloqueo de la fila al editar. El contrato anterior `imageUrl` sigue disponible junto a `imageUrls`; editar otros campos o repetir el seed conserva la galería. Eliminar un producto elimina sus imágenes en cascada. No se agregaron dependencias ni carga de archivos.
 
+## Extra implementado: promociones y novedades
+
+El administrador puede crear, editar, publicar, volver a borrador y eliminar promociones o novedades. Inicio muestra las publicaciones visibles. Una promoción vinculada a un producto muestra el precio promocional y el habitual tanto en Inicio como en el catálogo y el detalle. El filtro y el orden por precio usan el importe vigente de la API.
+
 ## Ampliación del buscador: rango de precios
 
 El catálogo permite precio mínimo y máximo opcionales en ARS, aplicados al pulsar un botón. Los límites son inclusivos y se combinan con los filtros, orden y paginación existentes. Se validan importes no negativos con hasta dos decimales y mínimo menor o igual al máximo en frontend y backend. La URL conserva los límites; aplicar un rango reinicia la página y limpiar filtros los elimina. La ampliación se limita al rango de precios acordado.
@@ -70,7 +74,7 @@ El catálogo permite precio mínimo y máximo opcionales en ARS, aplicados al pu
 - Tema: componentes para videojuegos. Marca: Pixel Forge Componentes.
 - Estética sobria y minimalista, exclusivamente modo claro.
 - Ejecución local; no se requiere publicación en Internet.
-- Se implementan todos los requisitos obligatorios. Se agregan el dashboard, los productos destacados, las múltiples imágenes y la ampliación del buscador con precio mínimo y máximo; los demás extras quedan para una etapa opcional.
+- Se implementan los requisitos obligatorios, el dashboard, los productos destacados, las múltiples imágenes, las promociones y novedades y la ampliación del buscador con precio mínimo y máximo.
 - No se integra correo real. La recuperación se demuestra con el código devuelto en desarrollo/pruebas.
 - No se implementan carrito, pagos, envíos ni asistente de armado de PC.
 - El backend se amplía para persistir y filtrar destacados, gestionar galerías de imágenes mediante URLs y filtrar por rango de precios, sin carga de archivos ni proveedor externo de almacenamiento.

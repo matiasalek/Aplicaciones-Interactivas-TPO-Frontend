@@ -517,6 +517,17 @@
   font-size: 10px;
   white-space: nowrap;
 }
+.offerBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  background: #faeadf;
+  color: #84402b;
+  font-size: 10px;
+  white-space: nowrap;
+}
 .out_of_stock {
   background: #f1f1ed;
   color: #59694d;
@@ -542,6 +553,38 @@
   font-weight: 650;
   letter-spacing: -0.05em;
   margin: 17px 0 0;
+}
+.oldPrice {
+  display: block;
+  color: #59694d;
+  font-size: 0.68em;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.price,
+.detailPrice {
+  overflow-wrap: anywhere;
+}
+.announcementGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}
+.announcementCard {
+  padding: 20px;
+  border: 1px solid #e5e9dd;
+  border-radius: 8px;
+  background: #fff;
+  overflow-wrap: anywhere;
+}
+.announcementCard h3 {
+  margin: 10px 0;
+}
+.announcementText {
+  white-space: pre-wrap;
+}
+.announcementCard .price {
+  margin-bottom: 8px;
 }
 .contactBanner {
   max-width: 1280px;

@@ -11,6 +11,7 @@ src/
     UI.jsx                    # Formularios, errores, paginación, confirmaciones
     Dashboard.jsx             # Métricas, distribuciones y actualización manual
     FeaturedProducts.jsx      # Selección pública de destacados y estados de carga
+    Announcements.jsx         # Promociones y novedades visibles en Inicio
     ProductCard.jsx           # Tarjetas, disponibilidad, destacado e imágenes
     ProductGallery.jsx        # Imagen principal, miniaturas y selección pública
     ProductImagesEditor.jsx   # URLs, vistas previas, orden y errores por imagen
@@ -25,6 +26,7 @@ src/
     PublicPages.jsx           # Inicio, catálogo, detalle, nosotros, contacto
     AuthPages.jsx             # Registro, acceso y recuperación
     AdminPages.jsx            # Administración completa
+    AnnouncementPages.jsx     # Listado y edición de promociones y novedades
   styles/
     global.css                # Bases, tipografía, foco y modo claro
     App.module.css            # Componentes y adaptaciones responsive
@@ -36,6 +38,8 @@ src/
 flowchart TD
   Inicio --> Catalogo[Catálogo con filtros]
   Inicio --> Destacados[Selección de destacados activos]
+  Inicio --> Novedades[Promociones y novedades publicadas]
+  Novedades --> Detalle
   Destacados --> Catalogo
   Catalogo --> Detalle[Detalle de producto]
   Detalle --> Contacto[Consulta con asunto precargado]
@@ -53,6 +57,7 @@ flowchart TD
   Productos --> Seleccion[Destacar / quitar destacado]
   Productos --> Galeria[Agregar / ordenar / quitar imágenes]
   Admin --> Categorias[Listar / crear / editar / eliminar categorías]
+  Admin --> Publicaciones[Listar / editar / publicar promociones y novedades]
   Admin --> Consultas[Listado de consultas]
   Consultas --> Consulta[Detalle / cambiar estado / eliminar]
   Admin --> Comercio[Crear o actualizar información institucional]
@@ -76,7 +81,7 @@ flowchart LR
 
 Los GET se cancelan cuando cambia la pantalla o los filtros para evitar respuestas antiguas. Las mutaciones deshabilitan controles durante el envío y bloquean solicitudes duplicadas. Los errores de negocio se traducen a mensajes en español; la validación local no reemplaza las restricciones de la API ni de PostgreSQL.
 
-El catálogo conserva `minPrice` y `maxPrice` en la URL. Los importes se editan localmente y se aplican al enviar el formulario de precio; `validatePriceRange` controla formato, límites y relación entre ambos. Una URL con rango inválido muestra el error sin consultar productos. El backend admite esos parámetros en los listados público y administrativo y aplica condiciones SQL parametrizadas inclusivas antes de ordenar y paginar. No se requieren cambios de esquema ni dependencias.
+El catálogo conserva `minPrice` y `maxPrice` en la URL. Los importes se editan localmente y se aplican al enviar el formulario de precio; `validatePriceRange` controla formato, límites y relación entre ambos. Una URL con rango inválido muestra el error sin consultar productos. El backend aplica condiciones SQL parametrizadas sobre el precio vigente antes de ordenar y paginar.
 
 Los formularios tienen etiquetas, errores asociados, foco en el primer error y feedback de envío. La navegación incluye enlace para saltar al contenido y foco en el contenido al cambiar de ruta. El diálogo nativo de confirmación captura el foco y permite Escape cuando no hay una operación en curso. Se respeta la preferencia de reducir animaciones.
 

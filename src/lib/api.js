@@ -11,12 +11,22 @@ const messages = {
   INVALID_CATEGORY: "La categoría seleccionada ya no existe.",
   CATEGORY_NOT_FOUND: "No encontramos esa categoría.",
   PRODUCT_NOT_FOUND: "Este producto no está disponible o ya no existe.",
+  ANNOUNCEMENT_NOT_FOUND: "Esta publicación ya no existe.",
+  INVALID_PROMOTION_PRODUCT: "El producto seleccionado ya no existe.",
+  INVALID_PROMOTION_PRICE:
+    "El precio promocional debe ser menor que el habitual.",
+  PRODUCT_PROMOTION_CONFLICT:
+    "Este producto ya tiene una promoción publicada. Retirala antes de publicar otra.",
+  REGULAR_PRICE_CONFLICT:
+    "El precio habitual debe superar al precio de la promoción publicada. Editá o retirá la promoción primero.",
   INQUIRY_NOT_FOUND: "Esta consulta ya no existe.",
   STORE_INFORMATION_NOT_FOUND:
     "El comercio todavía no configuró su información.",
   VALIDATION_ERROR:
     "Revisá los datos ingresados. Algún campo no cumple el formato requerido.",
 };
+
+export const announcementTypes = { news: "Novedad", promotion: "Promoción" };
 
 export class ApiError extends Error {
   constructor(message, status = 0, code = "", details = []) {

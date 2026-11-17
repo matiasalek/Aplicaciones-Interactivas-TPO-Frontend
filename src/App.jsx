@@ -16,6 +16,10 @@ import {
   ResetPasswordPage,
 } from "./pages/AuthPages";
 import {
+  AnnouncementEditorPage,
+  AnnouncementsPage,
+} from "./pages/AnnouncementPages";
+import {
   AdminHomePage,
   AdminProductsPage,
   ProductEditorPage,
@@ -103,6 +107,15 @@ export default function App() {
             <Route
               path="categorias/:id/editar"
               element={<CategoryEditorPage />}
+            />
+            <Route path="novedades" element={<AnnouncementsPage />} />
+            <Route
+              path="novedades/nueva"
+              element={<AnnouncementEditorPage create />}
+            />
+            <Route
+              path="novedades/:id/editar"
+              element={<AnnouncementEditorPage />}
             />
             <Route path="consultas" element={<InquiriesPage />} />
             <Route path="consultas/:id" element={<InquiryDetailPage />} />

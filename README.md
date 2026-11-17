@@ -6,7 +6,7 @@ La fuente de verdad es **TPO Segundo Cuatrimestre 2026.pdf**, conservado sin cam
 
 ## Ejecución local
 
-Requisitos: Node.js 24 (`.node-version`), npm y el backend actualizado con PostgreSQL, sus siete migraciones y su carga inicial de al menos 20 productos.
+Requisitos: Node.js 24 (`.node-version`), npm y el backend actualizado con PostgreSQL, sus ocho migraciones y su carga inicial de al menos 20 productos.
 
 1. Iniciar PostgreSQL y la API siguiendo el README del backend. La API debe escuchar en `http://localhost:3000`.
 2. En este repositorio:
@@ -36,6 +36,7 @@ Si PostgreSQL o la API están detenidos, las pantallas muestran un error con la 
 - CRUD de productos y categorías, activación/desactivación y gestión de consultas.
 - Productos destacados: selección desde el listado y formulario administrativos, sección en Inicio, filtro de catálogo e identificación en tarjetas y detalle.
 - Galerías de una a diez imágenes por producto mediante URLs, con orden e imagen principal administrables.
+- Promociones y novedades administrables con borradores. Las ofertas vinculadas a productos se aplican también al catálogo, los filtros y el orden por precio.
 - Dashboard en Administración → Resumen: totales de productos, visibilidad, disponibilidad, categorías y consultas por estado, con actualización manual.
 - Edición de información institucional y datos personales del administrador.
 - Validaciones locales alineadas con los contratos del backend, estados de carga, errores y confirmaciones de eliminación.
@@ -80,6 +81,12 @@ Las filas incluyen una vista previa, validaciones por imagen y control de URLs r
 
 El backend devuelve `imageUrls` en orden y conserva `imageUrl` como primera imagen por compatibilidad. La actualización de producto y galería es transaccional. La migración preserva las imágenes anteriores, el seed respeta galerías administradas y la eliminación del producto borra sus registros de imágenes, sin modificar archivos remotos. No se suben archivos ni se agregan dependencias.
 
+## Promociones y novedades
+
+En Administración → Promociones y novedades se puede crear, editar y eliminar una publicación. Elegí el tipo, completá el título y el texto y guardala como **Borrador** o **Publicada**. Inicio muestra las publicaciones visibles desde la más reciente.
+
+Una promoción puede asociarse a un producto con un precio menor al habitual. Las tarjetas y el detalle muestran **Oferta**, el precio habitual tachado y el precio promocional. El rango y el orden usan el precio vigente. Se permite hasta una promoción publicada por producto. Volverla a borrador o eliminarla restablece el precio habitual. Desactivar el producto oculta también su anuncio público hasta que vuelva a estar activo.
+
 ## Validaciones
 
 Todos los formularios validan antes de enviar y el backend vuelve a validar los datos de manera independiente. Los precios admiten desde cero hasta 9.999.999.999,99 ARS con hasta dos decimales, sin redondear valores inválidos. La interfaz convierte precio y categoría a números JSON; la API rechaza texto, booleanos y nulos en esos campos.
@@ -114,7 +121,7 @@ La tipografía usa fuentes web de Google con alternativas del sistema; si no hay
 | `npm test`         | Pruebas unitarias de validaciones y utilidades.     |
 | `npm run test:e2e` | Pruebas de navegador con Chromium y API real.       |
 
-Para las pruebas de navegador, instalar Chromium una vez con `npx playwright install chromium`. Estas pruebas **crean, modifican y eliminan sus propios registros**. Usar una instancia de backend conectada a una base exclusiva de pruebas con las siete migraciones y el seed cargado, nunca la base de demostración. El frontend de las pruebas se inicia automáticamente en 5173; `API_TARGET` determina el backend usado.
+Para las pruebas de navegador, instalar Chromium una vez con `npx playwright install chromium`. Estas pruebas **crean, modifican y eliminan sus propios registros**. Usar una instancia de backend conectada a una base exclusiva de pruebas con las ocho migraciones y el seed cargado, nunca la base de demostración. El frontend de las pruebas se inicia automáticamente en 5173; `API_TARGET` determina el backend usado.
 
 ```bash
 API_TARGET=http://127.0.0.1:3001 E2E_ALLOW_WRITES=1 npm run test:e2e

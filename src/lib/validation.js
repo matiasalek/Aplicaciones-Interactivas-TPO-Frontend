@@ -41,6 +41,12 @@ export const rules = {
     message: text(10000),
   },
   category: { name: text(100), description: text(2000, 0) },
+  announcement: {
+    type: { required: true, oneOf: ["news", "promotion"] },
+    title: text(120),
+    description: text(2000),
+    status: { required: true, oneOf: ["draft", "published"] },
+  },
   product: {
     isActive: { boolean: true },
     isFeatured: { boolean: true },
@@ -126,6 +132,11 @@ export function validate(values, schema) {
     }
     const raw = String(values[key] ?? "");
     const value = rule.preserve ? raw : raw.trim();
+    const customError = rule.check?.(value, values);
+    if (customError) {
+      errors[key] = customError;
+      continue;
+    }
     if (!value) {
       if (rule.required) errors[key] = "Completá este campo.";
       continue;

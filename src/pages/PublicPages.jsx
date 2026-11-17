@@ -13,11 +13,14 @@ import {
 import { Link, useParams, useSearchParams } from "react-router";
 import { useStore } from "../components/Layouts";
 import HardwareArt from "../components/HardwareArt";
+import Announcements from "../components/Announcements";
 import FeaturedProducts from "../components/FeaturedProducts";
 import ProductGallery from "../components/ProductGallery";
 import ProductCard, {
   AvailabilityBadge,
   FeaturedBadge,
+  OfferBadge,
+  ProductPrice,
 } from "../components/ProductCard";
 import {
   ArrowLink,
@@ -31,7 +34,7 @@ import {
   Pagination,
   ResourceState,
 } from "../components/UI";
-import { api, availability, money, queryString, safeWebUrl } from "../lib/api";
+import { api, availability, queryString, safeWebUrl } from "../lib/api";
 import { useMutation, useResource } from "../lib/hooks";
 import { rules, validate, validatePriceRange } from "../lib/validation";
 import s from "../styles/App.module.css";
@@ -145,6 +148,7 @@ export function HomePage() {
         </ResourceState>
       </section>
       <FeaturedProducts />
+      <Announcements />
       <section className={`${s.section} ${s.softSection}`}>
         <div className={s.sectionHeading}>
           <div>
@@ -506,8 +510,9 @@ export function ProductPage() {
                   <div className={s.productBadges}>
                     <AvailabilityBadge value={product.availability} />
                     {product.isFeatured && <FeaturedBadge />}
+                    {product.promotionPrice != null && <OfferBadge />}
                   </div>
-                  <p className={s.detailPrice}>{money(product.price)}</p>
+                  <ProductPrice product={product} className={s.detailPrice} />
                   <p className={s.muted}>
                     Precio expresado en pesos argentinos.
                   </p>

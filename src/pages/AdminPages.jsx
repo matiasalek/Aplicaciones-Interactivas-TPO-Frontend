@@ -5,6 +5,7 @@ import {
   Check,
   Grid2X2,
   Mail,
+  Megaphone,
   Pencil,
   Plus,
   Search,
@@ -62,6 +63,12 @@ export function AdminHomePage() {
       Grid2X2,
       "Categorías",
       "Ordená el catálogo para que encontrar sea más fácil.",
+    ],
+    [
+      "novedades",
+      Megaphone,
+      "Promociones y novedades",
+      "Publicá avisos y ofertas para el catálogo.",
     ],
     [
       "consultas",
@@ -393,7 +400,7 @@ export function AdminProductsPage() {
             })
           }
         >
-          Se eliminará “{target.name}”. Esta acción no se puede deshacer.
+          Se eliminará “{target.name}” y sus promociones asociadas.
         </ConfirmDialog>
       )}
     </>
