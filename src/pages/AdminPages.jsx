@@ -21,7 +21,11 @@ import {
   useSearchParams,
 } from "react-router";
 import { useAuth } from "../context/AuthContext";
-import { AvailabilityBadge } from "../components/ProductCard";
+import {
+  AvailabilityBadge,
+  OfferBadge,
+  ProductPrice,
+} from "../components/ProductCard";
 import { Dashboard } from "../components/Dashboard";
 import ProductImagesEditor from "../components/ProductImagesEditor";
 import {
@@ -42,7 +46,6 @@ import {
   availability,
   date,
   inquiryStates,
-  money,
   queryString,
 } from "../lib/api";
 import { useMutation, useResource } from "../lib/hooks";
@@ -187,7 +190,9 @@ export function AdminProductsPage() {
       });
       setMessage(
         product.isFeatured
-          ? "Producto quitado de destacados."
+          ? product.promotionPrice != null
+            ? "Se quitó el destacado manual. El producto sigue destacado por su oferta."
+            : "Producto quitado de destacados."
           : product.isActive
             ? "Producto destacado. Ya aparece en la selección pública."
             : "Producto destacado. Aparecerá en la selección pública cuando lo actives.",
@@ -271,8 +276,8 @@ export function AdminProductsPage() {
             onChange={(event) => update({ isFeatured: event.target.value })}
           >
             <option value="">Todos</option>
-            <option value="true">Destacados</option>
-            <option value="false">Sin destacar</option>
+            <option value="true">Destacados manuales</option>
+            <option value="false">Sin destacar manualmente</option>
           </select>
         </div>
         {(q || isActive || isFeatured || categoryId) && (
@@ -296,7 +301,7 @@ export function AdminProductsPage() {
                   <th>Precio</th>
                   <th>Disponibilidad</th>
                   <th>Visibilidad</th>
-                  <th>Destacado</th>
+                  <th>Destacado manual</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -312,7 +317,13 @@ export function AdminProductsPage() {
                       </Link>
                       <small>{product.category.name}</small>
                     </td>
-                    <td className={s.nowrap}>{money(product.price)}</td>
+                    <td className={s.nowrap}>
+                      <ProductPrice
+                        product={product}
+                        className={s.adminProductPrice}
+                      />
+                      {product.promotionPrice != null && <OfferBadge />}
+                    </td>
                     <td>
                       <AvailabilityBadge value={product.availability} />
                     </td>
@@ -341,6 +352,10 @@ export function AdminProductsPage() {
                         <span />
                         {product.isFeatured ? "Sí" : "No"}
                       </button>
+                      {!product.isFeatured &&
+                        product.promotionPrice != null && (
+                          <small>Destacado por oferta</small>
+                        )}
                     </td>
                     <td>
                       <div className={s.tableActions}>

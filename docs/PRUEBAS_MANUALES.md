@@ -43,7 +43,7 @@ Iniciar la API y PostgreSQL, ejecutar `npm run dev` y abrir http://127.0.0.1:517
 1. Si se actualiza una instalación anterior, detener la API, ejecutar `npm run db:migrate` desde `backend/` y reiniciarla. Los productos previos deben conservar sus datos y quedar sin destacar.
 2. Crear un producto: **Destacar producto** comienza desmarcado. Marcarlo, guardar y recargar la edición para comprobar persistencia. Repetir al editar un producto existente.
 3. Desde el listado, destacar y quitar de destacados; comprobar mensajes, bloqueo durante el envío y filtros **Destacados / Sin destacar** combinados con categoría, búsqueda y visibilidad. Recargar y comprobar que los filtros persisten en URL.
-4. Abrir Inicio: mostrar hasta cuatro destacados activos, del más reciente al más antiguo, con identificación y enlace a todos. Un producto común no debe aparecer en esa selección.
+4. Abrir Inicio: mostrar hasta cuatro destacados activos, con ofertas primero y destacados manuales restantes del más reciente al más antiguo. Verificar la identificación y el enlace a todos.
 5. Abrir **Ver todos los destacados**: comprobar el filtro **Selección → Solo destacados**, combinarlo con búsqueda, categoría, disponibilidad y orden. Paginar, recargar, retroceder y limpiar filtros.
 6. Abrir un destacado y comprobar la identificación junto a la disponibilidad. Quitar el destacado: debe seguir en el catálogo si está activo.
 7. Desactivar un destacado: debe desaparecer de Inicio, catálogo y detalle público, manteniendo la selección en administración. Reactivarlo: debe volver a aparecer.
@@ -65,9 +65,9 @@ Iniciar la API y PostgreSQL, ejecutar `npm run dev` y abrir http://127.0.0.1:517
 ## Promociones y novedades
 
 1. Crear una novedad en borrador y comprobar que no aparezca en Inicio. Publicarla y comprobar el título y el texto.
-2. Crear una promoción con producto. Probar un precio igual al habitual y luego uno menor. Publicarla y comprobar el precio habitual tachado, el promocional y la etiqueta Oferta en el catálogo y el detalle.
+2. Crear una promoción con producto. Probar un precio igual al habitual y luego uno menor. Publicarla y comprobar el precio habitual tachado, el promocional y la etiqueta Oferta en el catálogo, el detalle y al buscar en Administración → Productos.
 3. Aplicar un límite de precio que incluya la oferta pero excluya el precio habitual. Ordenar por precio y comprobar la posición del producto.
-4. Intentar publicar otra oferta para el mismo producto. Volver la primera a borrador y comprobar que se restaura el precio habitual. Eliminar la publicación.
+4. Comprobar que la oferta aparece en Destacados de Inicio aunque el interruptor manual esté apagado. Volverla a borrador y comprobar que se restaura el precio habitual y que solo sigue en Destacados si está marcado manualmente.
 
 ## Recuperación
 

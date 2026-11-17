@@ -305,7 +305,8 @@ test("destacados con persistencia real, edición, filtros, visibilidad y respons
 test("selección vacía, error, reintento y filtros sin resultados", async ({
   page,
 }) => {
-  const pattern = "**/api/v1/products?isFeatured=true&limit=4&sort=newest";
+  const pattern =
+    "**/api/v1/products?isFeatured=true&limit=4&sort=offers_first";
   await page.goto("/");
   await expect(
     selection(page).getByRole("heading", {

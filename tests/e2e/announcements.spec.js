@@ -50,6 +50,7 @@ test("publica una oferta con el mismo precio en Inicio, catálogo, filtros y det
   const card = page.getByRole("article").filter({
     has: page.getByRole("heading", { name: productName, exact: true }),
   });
+  const featured = page.getByRole("region", { name: "Productos destacados." });
 
   try {
     await page.goto(list);
@@ -84,7 +85,23 @@ test("publica una oferta con el mismo precio en Inicio, catálogo, filtros y det
     await page.getByLabel("Estado").selectOption("published");
     await save.click();
     await expect(row.getByText("Publicada")).toBeVisible();
+    await page.goto("/admin/productos");
+    await page.getByLabel("Buscar productos").fill(productName);
+    await page.getByRole("button", { name: "Buscar", exact: true }).click();
+    const adminProduct = page.getByRole("row").filter({ hasText: productName });
+    const adminPrice = adminProduct
+      .getByRole("cell")
+      .filter({ has: page.getByText("Oferta", { exact: true }) });
+    await expect(adminPrice.locator("s")).toHaveText(money(500));
+    await expect(adminPrice).toContainText(money(125.5));
+    await expect(adminProduct.getByText("Destacado por oferta")).toBeVisible();
+    await expect(
+      adminProduct.getByRole("switch", { name: `Destacado de ${productName}` }),
+    ).not.toBeChecked();
     await page.goto("/");
+    await expect(
+      featured.getByRole("heading", { name: productName, exact: true }),
+    ).toBeVisible();
     const announcement = page.getByRole("article").filter({ hasText: title });
     await expect(announcement.locator("s")).toHaveText(money(500));
     await expect(announcement).toContainText(money(125.5));
@@ -117,6 +134,12 @@ test("publica una oferta con el mismo precio en Inicio, catálogo, filtros y det
     await page.getByLabel("Estado").selectOption("draft");
     await save.click();
     await expect(row.getByText("Borrador")).toBeVisible();
+    await page.goto("/");
+    await expect(
+      featured.getByRole("heading", {
+        name: "Estamos preparando nuestra selección",
+      }),
+    ).toBeVisible();
     await page.goto(catalog);
     await expect(card.getByText(money(500), { exact: true })).toBeVisible();
     await expect(card.getByText("Oferta", { exact: true })).toHaveCount(0);

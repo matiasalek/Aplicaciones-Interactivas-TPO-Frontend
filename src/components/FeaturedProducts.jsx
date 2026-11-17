@@ -4,7 +4,9 @@ import { useResource } from "../lib/hooks";
 import s from "../styles/App.module.css";
 
 export default function FeaturedProducts() {
-  const products = useResource("/products?isFeatured=true&limit=4&sort=newest");
+  const products = useResource(
+    "/products?isFeatured=true&limit=4&sort=offers_first",
+  );
   return (
     <section className={s.section} aria-labelledby="featured-heading">
       <div className={s.sectionHeading}>

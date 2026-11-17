@@ -42,7 +42,7 @@ Los conteos de productos incluyen todas las páginas y los inactivos. Las consul
 
 ## Extra implementado: productos destacados
 
-Administración permite marcar y desmarcar productos destacados desde el listado y desde el formulario de alta/edición, con filtro de selección. Inicio publica hasta cuatro destacados activos y enlaza al catálogo filtrado. Las tarjetas y el detalle identifican la selección. Se mantienen búsqueda, categoría, disponibilidad, orden, paginación y filtros en URL.
+Administración permite marcar y desmarcar productos destacados desde el listado y desde el formulario de alta/edición, con filtro de selección manual. Una oferta publicada también destaca al producto en el sitio público. Inicio muestra hasta cuatro destacados activos, con prioridad para las ofertas, y enlaza al catálogo filtrado. Las tarjetas y el detalle identifican la selección.
 
 El backend incorpora `isFeatured`, validaciones, filtro público/administrativo y una sexta migración SQL, también incluida en el script de creación. Los productos previos quedan sin destacar; el seed conserva las selecciones. Los inactivos permanecen ocultos públicamente aunque sean destacados. La selección es independiente de la disponibilidad y no tiene límite ni orden manual.
 

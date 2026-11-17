@@ -91,9 +91,9 @@ Al salir de un campo hacia el botón de envío, el formulario realiza la validac
 
 ## Productos destacados
 
-`FeaturedProducts.jsx` consulta `/products?isFeatured=true&limit=4&sort=newest` con el hook cancelable existente. El enlace de la sección conduce a `/productos?isFeatured=true`; el catálogo conserva el filtro al buscar, ordenar, paginar y recargar. La selección se publica como `isFeatured` y se presenta en tarjetas y detalle.
+`FeaturedProducts.jsx` consulta `/products?isFeatured=true&limit=4&sort=offers_first` con el hook cancelable existente. El enlace conduce a `/productos?isFeatured=true`. El catálogo conserva el filtro al buscar, ordenar, paginar y recargar.
 
-Los formularios y el interruptor administrativo envían booleanos JSON a los endpoints existentes de productos. PostgreSQL guarda `is_featured` con valor inicial `false`, agregado por la migración `006_add_featured_products.sql`. La API aplica conjuntamente el filtro de destacados y la condición de producto activo en las consultas públicas. La visibilidad y la selección se editan por separado; no hay selección automática ni dependencias nuevas.
+PostgreSQL guarda la selección manual en `is_featured` desde la migración `006_add_featured_products.sql`. En la API pública, `isFeatured` incluye además los productos activos con oferta publicada. Inicio ordena primero las ofertas y luego completa con la selección manual. Administración usa la selección manual en su filtro y en el interruptor. El listado reutiliza el componente de precios del catálogo para mostrar el importe vigente.
 
 ## Galerías de productos
 

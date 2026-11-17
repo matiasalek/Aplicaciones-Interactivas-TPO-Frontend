@@ -65,9 +65,9 @@ Las métricas describen el estado actual, sin historial ni actualización en tie
 
 ## Productos destacados
 
-En Administración → Productos se puede destacar o quitar de destacados con un interruptor, o con **Destacar producto** al crear y editar. El filtro administrativo distingue todos, destacados y sin destacar; puede combinarse con categoría, búsqueda y visibilidad, y se conserva en la URL.
+En Administración → Productos se puede destacar o quitar de destacados con un interruptor, o con **Destacar producto** al crear y editar. El filtro administrativo distingue la selección manual y se puede combinar con categoría, búsqueda y visibilidad. El listado muestra también cuándo un producto está destacado por su oferta.
 
-El inicio muestra hasta cuatro destacados activos, ordenados del más reciente al más antiguo, con un enlace a todos los destacados del catálogo. El filtro **Selección → Solo destacados** se combina con los demás filtros, orden y paginación. Las tarjetas y el detalle muestran una identificación de destacado junto a la disponibilidad.
+Inicio muestra hasta cuatro productos activos en Destacados, con las ofertas primero y los destacados manuales restantes ordenados por fecha de alta. El filtro **Selección → Solo destacados** incluye ambos en el catálogo y se combina con los demás filtros, orden y paginación. Al retirar una oferta, el producto sigue en Destacados si también tiene una selección manual.
 
 No hay límite de productos destacados ni orden manual. Un producto inactivo conserva su selección, pero queda oculto en todo el sitio público; vuelve a aparecer al activarlo. Quitar el destacado no desactiva el producto. La disponibilidad sigue siendo independiente: un destacado puede estar sin stock o a pedido.
 
@@ -85,7 +85,7 @@ El backend devuelve `imageUrls` en orden y conserva `imageUrl` como primera imag
 
 En Administración → Promociones y novedades se puede crear, editar y eliminar una publicación. Elegí el tipo, completá el título y el texto y guardala como **Borrador** o **Publicada**. Inicio muestra las publicaciones visibles desde la más reciente.
 
-Una promoción puede asociarse a un producto con un precio menor al habitual. Las tarjetas y el detalle muestran **Oferta**, el precio habitual tachado y el precio promocional. El rango y el orden usan el precio vigente. Se permite hasta una promoción publicada por producto. Volverla a borrador o eliminarla restablece el precio habitual. Desactivar el producto oculta también su anuncio público hasta que vuelva a estar activo.
+Una promoción puede asociarse a un producto con un precio menor al habitual. Las tarjetas, el detalle y el listado de Productos en Administración muestran **Oferta**, el precio habitual tachado y el precio promocional. El rango y el orden usan el precio vigente. Se permite hasta una promoción publicada por producto. Volverla a borrador o eliminarla restablece el precio habitual. Desactivar el producto oculta también su anuncio público hasta que vuelva a estar activo.
 
 ## Validaciones
 
