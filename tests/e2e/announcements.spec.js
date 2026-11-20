@@ -22,6 +22,7 @@ test("publica una oferta con el mismo precio en Inicio, catálogo, filtros y det
       email: `promociones-${unique}@example.com`,
       phone: "1144445555",
       password: "Segura123!",
+      inviteCode: process.env.E2E_ADMIN_INVITE_CODE,
     },
   });
   expect(registration.status()).toBe(201);

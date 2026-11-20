@@ -9,7 +9,7 @@ import {
 import { queryString, safeWebUrl } from "../src/lib/api.js";
 
 test("el registro valida todos los datos requeridos y la confirmación", () => {
-  assert.equal(Object.keys(validate({}, rules.register)).length, 6);
+  assert.equal(Object.keys(validate({}, rules.register)).length, 7);
   const valid = {
     firstName: "Ada",
     lastName: "Lovelace",
@@ -17,8 +17,10 @@ test("el registro valida todos los datos requeridos y la confirmación", () => {
     phone: "1144445555",
     password: "ClaveSegura123",
     confirmPassword: "ClaveSegura123",
+    inviteCode: "invitacion-de-prueba",
   };
   assert.deepEqual(validate(valid, rules.register), {});
+  assert.ok(validate({ ...valid, inviteCode: " " }, rules.register).inviteCode);
   assert.ok(
     validate({ ...valid, confirmPassword: "distinta" }, rules.register)
       .confirmPassword,

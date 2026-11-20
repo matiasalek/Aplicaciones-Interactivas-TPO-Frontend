@@ -30,6 +30,7 @@ test("destacados con persistencia real, edición, filtros, visibilidad y respons
       email: `destacados-${unique}@example.com`,
       phone: "1144445555",
       password: "Segura123!",
+      inviteCode: process.env.E2E_ADMIN_INVITE_CODE,
     },
   });
   expect(registration.status()).toBe(201);

@@ -28,6 +28,7 @@ export const rules = {
     ...profile,
     password,
     confirmPassword: { ...password, matches: "password" },
+    inviteCode: { required: true },
   },
   profile,
   forgot: { email },

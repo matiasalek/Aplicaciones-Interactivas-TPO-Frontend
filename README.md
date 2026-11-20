@@ -55,7 +55,7 @@ Las métricas describen el estado actual, sin historial ni actualización en tie
 
 ## Primera demostración
 
-1. Registrarse desde Acceso admin → Creá tu cuenta. Se inicia sesión automáticamente.
+1. Registrarse desde **Acceso admin → Creá tu cuenta** con el código `ADMIN_INVITE_CODE` configurado en el `.env` del backend. Se inicia sesión automáticamente.
 2. Completar Información del comercio. Los datos aparecen en Nosotros, Contacto y el pie público.
 3. Revisar las categorías y los 20 productos precargados.
 4. Crear una categoría y un producto, editarlo, desactivarlo y comprobar que desaparece del catálogo público. Activarlo nuevamente.
@@ -123,10 +123,10 @@ La tipografía usa fuentes web de Google con alternativas del sistema; si no hay
 | `npm test`         | Pruebas unitarias de validaciones y utilidades.     |
 | `npm run test:e2e` | Pruebas de navegador con Chromium y API real.       |
 
-Para las pruebas de navegador, instalar Chromium una vez con `npx playwright install chromium`. Estas pruebas **crean, modifican y eliminan sus propios registros**. Usar una instancia de backend conectada a una base exclusiva de pruebas con las nueve migraciones y el seed cargado, nunca la base de demostración. El frontend de las pruebas se inicia automáticamente en 5173; `API_TARGET` determina el backend usado.
+Para las pruebas de navegador, instalar Chromium una vez con `npx playwright install chromium`. Estas pruebas **crean, modifican y eliminan sus propios registros**. Usar una instancia de backend conectada a una base exclusiva de pruebas con las nueve migraciones y el seed cargado, nunca la base de demostración. El frontend de las pruebas se inicia automáticamente en 5173. `API_TARGET` determina el backend usado y `E2E_ADMIN_INVITE_CODE` debe coincidir con el `ADMIN_INVITE_CODE` de esa instancia.
 
 ```bash
-API_TARGET=http://127.0.0.1:3001 E2E_ALLOW_WRITES=1 npm run test:e2e
+API_TARGET=http://127.0.0.1:3001 E2E_ADMIN_INVITE_CODE=codigo-de-pruebas E2E_ALLOW_WRITES=1 npm run test:e2e
 ```
 
 El detalle de la estructura y la navegación está en [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md). El recorrido manual está en [docs/PRUEBAS_MANUALES.md](docs/PRUEBAS_MANUALES.md).

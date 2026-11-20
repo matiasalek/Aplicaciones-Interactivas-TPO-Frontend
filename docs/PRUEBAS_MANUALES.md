@@ -17,7 +17,7 @@ Iniciar la API y PostgreSQL, ejecutar `npm run dev` y abrir http://127.0.0.1:517
 ## Sesión y administración
 
 1. Abrir `/admin/productos` sin sesión: debe mostrar acceso y regresar al destino al ingresar.
-2. Registrarse y probar el mismo correo desde otra sesión: debe mostrarse el conflicto.
+2. Probar el registro con un código de invitación incorrecto y comprobar el mensaje de error. Ingresar el código configurado en el backend y verificar el acceso al panel. Probar el mismo correo con el código válido desde otra sesión y comprobar el mensaje de correo duplicado.
 3. Editar el perfil, recargar y comprobar persistencia.
 4. Completar datos del comercio, horarios y redes. Consultar Nosotros, Contacto y el pie público.
 5. Crear, editar y eliminar una categoría vacía.

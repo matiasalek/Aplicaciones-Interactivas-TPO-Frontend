@@ -172,6 +172,7 @@ test("correo duplicado visible en registro y redirección al revocarse una sesi�
     email,
     phone: "1144445555",
     password: "Segura123!",
+    inviteCode: process.env.E2E_ADMIN_INVITE_CODE,
   };
   expect((await request.post("/api/v1/auth/register", { data })).status()).toBe(
     201,
@@ -183,6 +184,7 @@ test("correo duplicado visible en registro y redirección al revocarse una sesi�
   await page.getByLabel("Teléfono").fill(data.phone);
   await page.getByLabel(/^Contraseña/).fill(data.password);
   await page.getByLabel("Repetí la contraseña").fill(data.password);
+  await page.getByLabel("Código de invitación").fill(data.inviteCode);
   await page.getByRole("button", { name: "Crear cuenta", exact: true }).click();
   await expect(page.getByRole("alert")).toHaveText(
     "Ya existe una cuenta con ese correo electrónico.",
@@ -243,6 +245,7 @@ test("administración completa con persistencia real, recuperación y revocació
   const email = `e2e-${unique}@example.com`;
   const password = "ClaveInicial123!";
   const newPassword = "ClaveRenovada123!";
+  const inviteCode = process.env.E2E_ADMIN_INVITE_CODE;
   const categoryName = `Categoría E2E ${unique}`;
   const productName = `Producto E2E ${unique}`;
   const subject = `Consulta E2E ${unique}`;
@@ -253,6 +256,15 @@ test("administración completa con persistencia real, recuperación y revocació
   await page.getByLabel("Teléfono").fill("1144445555");
   await page.getByLabel(/^Contraseña/).fill(password);
   await page.getByLabel("Repetí la contraseña").fill(password);
+  const inviteField = page.getByLabel("Código de invitación");
+  await inviteField.fill(`${inviteCode}-incorrecto`);
+  await page.getByRole("button", { name: "Crear cuenta", exact: true }).click();
+  await expect(page.getByRole("alert")).toHaveText(
+    "Código de invitación inválido.",
+  );
+  await expect(page).toHaveURL(/\/registrarse$/);
+  expect(await getToken(page)).toBeNull();
+  await inviteField.fill(inviteCode);
   await page.getByRole("button", { name: "Crear cuenta", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Hola, Ada." })).toBeVisible();
   const token = await getToken(page);
@@ -264,6 +276,7 @@ test("administración completa con persistencia real, recuperación y revocació
       email,
       phone: "1144445555",
       password,
+      inviteCode,
     },
   });
   expect(duplicate.status()).toBe(409);

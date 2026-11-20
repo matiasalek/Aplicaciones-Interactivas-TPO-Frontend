@@ -76,6 +76,7 @@ test("productos y comercio validan precios, imágenes, redes y teléfonos", asyn
       email: `validacion-${unique}@example.com`,
       phone: "1144445555",
       password: "Segura123!",
+      inviteCode: process.env.E2E_ADMIN_INVITE_CODE,
     },
   });
   expect(registration.status()).toBe(201);

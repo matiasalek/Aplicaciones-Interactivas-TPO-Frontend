@@ -348,14 +348,6 @@ Abrir `http://127.0.0.1:5173`. Entrar a **Acceso admin → Creá tu cuenta**, co
 
 Con la API detenida, ejecutar `npm run db:migrate` desde `backend/` y reiniciar el servidor. El ejecutor registra cada versión con una transacción. La 006 agrega destacados, la 007 crea las galerías, la 008 agrega promociones y novedades y la 009 instala las fotos en ejemplos que conservan su imagen inicial. Las galerías editadas se preservan.
 
-### Alternativa SQL de entrega
-
-Desde `backend/` usar el script sobre una base vacía ya creada. Luego ejecutar el seed apuntando a esa misma base mediante `DATABASE_URL`.
-
-```bash
-psql "$DATABASE_URL" -f database/create_database.sql
-npm run db:seed
-```
 
 ### Diagnóstico local
 
@@ -481,10 +473,3 @@ Devuelve `{ status: "ok" }`. En **Network**, la llamada directa usa el puerto 30
 | Consigna                   | `TPO Segundo Cuatrimestre 2026.pdf`, en la raíz del repositorio del backend.                                                                                                                                                                                                                                                                       |
 
 Los commits enlazados identifican el código fuente de la entrega, con fotos locales, precios de oferta en Administración, destacados automáticos y CORS configurable en Express. Las [fotos WebP y sus créditos](https://github.com/matiasalek/Aplicaciones-Interactivas-TPO/tree/9c829ad60287c4c610b7b2d6dfd639d54cf213d7/backend/public/catalog-media) se incluyen en el repositorio del backend.
-
-### Verificación previa a la entrega
-
-1. Verificar que la cátedra pueda acceder al código fuente de los dos repositorios.
-2. Confirmar el flujo de instalación desde una base limpia y comprobar que haya nueve migraciones aplicadas y veinte productos precargados con fotos.
-3. Preparar una cuenta de demostración, datos institucionales, un destacado, una galería y una promoción para el recorrido. Compartir credenciales solo por el canal previsto para la presentación, si fueran necesarias.
-4. Entregar esta documentación junto con ambos códigos fuente y el script SQL con sus migraciones.

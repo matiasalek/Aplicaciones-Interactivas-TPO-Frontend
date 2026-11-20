@@ -1,5 +1,14 @@
 import { defineConfig } from "@playwright/test";
 
+if (
+  process.env.E2E_ALLOW_WRITES === "1" &&
+  !process.env.E2E_ADMIN_INVITE_CODE?.trim()
+) {
+  throw new Error(
+    "Configurá E2E_ADMIN_INVITE_CODE con el código de la API de pruebas.",
+  );
+}
+
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: false,

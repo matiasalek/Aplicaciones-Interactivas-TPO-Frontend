@@ -68,7 +68,7 @@ export function LoginPage({ register = false }) {
       }
       description={
         register
-          ? "Completá tus datos para comenzar a gestionar el comercio."
+          ? "Completá tus datos y usá el código de invitación para registrarte."
           : "Ingresá para administrar Pixel Forge."
       }
     >
@@ -86,6 +86,7 @@ export function LoginPage({ register = false }) {
                 phone: "",
                 password: "",
                 confirmPassword: "",
+                inviteCode: "",
               }
             : { email: "", password: "" }
         }
@@ -125,10 +126,16 @@ export function LoginPage({ register = false }) {
                 : undefined,
             })}
             {register ? (
-              field("confirmPassword", "Repetí la contraseña", {
-                type: "password",
-                autoComplete: "new-password",
-              })
+              <>
+                {field("confirmPassword", "Repetí la contraseña", {
+                  type: "password",
+                  autoComplete: "new-password",
+                })}
+                {field("inviteCode", "Código de invitación", {
+                  type: "password",
+                  autoComplete: "off",
+                })}
+              </>
             ) : (
               <Link to="/recuperar-contrasena" className={s.inlineLink}>
                 Olvidé mi contraseña

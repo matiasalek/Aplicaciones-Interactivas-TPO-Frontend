@@ -16,6 +16,7 @@ test("dashboard con datos reales, actualización, responsive, vacío y reintento
       email: `dashboard-${Date.now()}@example.com`,
       phone: "1144445555",
       password: "PruebaSegura123!",
+      inviteCode: process.env.E2E_ADMIN_INVITE_CODE,
     },
   });
   expect(response.status()).toBe(201);

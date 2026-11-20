@@ -1,5 +1,7 @@
 const messages = {
   EMAIL_CONFLICT: "Ya existe una cuenta con ese correo electrónico.",
+  INVALID_INVITE_CODE: "Código de invitación inválido.",
+  REGISTRATION_DISABLED: "El registro de administradores no está disponible.",
   INVALID_CREDENTIALS: "El correo o la contraseña son incorrectos.",
   AUTHENTICATION_REQUIRED: "Tu sesión venció. Volvé a iniciar sesión.",
   INVALID_RESET_TOKEN:

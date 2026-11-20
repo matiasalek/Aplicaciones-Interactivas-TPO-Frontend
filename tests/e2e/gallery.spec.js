@@ -19,6 +19,7 @@ async function signIn(page, request, label) {
       email: `${label}-${Date.now()}@example.com`,
       phone: "1144445555",
       password: "Segura123!",
+      inviteCode: process.env.E2E_ADMIN_INVITE_CODE,
     },
   });
   expect(response.status()).toBe(201);
