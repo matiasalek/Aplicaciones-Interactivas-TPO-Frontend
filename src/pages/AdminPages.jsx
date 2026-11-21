@@ -826,7 +826,8 @@ export function InquiriesPage() {
                   <th>Contacto</th>
                   <th>Fecha</th>
                   <th>Estado</th>
-                  <th>Detalle</th>
+                  <th>Feedback</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -848,14 +849,34 @@ export function InquiriesPage() {
                         {inquiryStates[inquiry.status]}
                       </span>
                     </td>
+                    <td className={s.descriptionCell}>
+                      {inquiry.feedback ? (
+                        <span title={inquiry.feedback}>
+                          {inquiry.feedback.length > 80
+                            ? `${inquiry.feedback.slice(0, 80)}…`
+                            : inquiry.feedback}
+                        </span>
+                      ) : (
+                        "Sin feedback"
+                      )}
+                    </td>
                     <td>
-                      <Link
-                        to={`/admin/consultas/${inquiry.id}`}
-                        className={s.iconButton}
-                        aria-label={`Leer ${inquiry.subject}`}
-                      >
-                        <ArrowUpRight size={18} />
-                      </Link>
+                      <div className={s.tableActions}>
+                        <a
+                          className={s.iconButton}
+                          href={`mailto:${encodeURIComponent(inquiry.email)}?subject=${encodeURIComponent(inquiry.subject)}`}
+                          aria-label={`Responder ${inquiry.subject}`}
+                        >
+                          <Mail size={17} />
+                        </a>
+                        <Link
+                          to={`/admin/consultas/${inquiry.id}`}
+                          className={s.iconButton}
+                          aria-label={`Leer ${inquiry.subject}`}
+                        >
+                          <ArrowUpRight size={18} />
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -886,10 +907,15 @@ export function InquiryDetailPage() {
     authenticated: true,
   });
   const mutation = useMutation();
+  const feedbackMutation = useMutation();
   const navigate = useNavigate();
   const [confirm, setConfirm] = useState(false);
   const [message, setMessage] = useState("");
+  const [feedbackMessage, setFeedbackMessage] = useState("");
   const inquiry = resource.data?.data;
+  const replyHref = inquiry
+    ? `mailto:${encodeURIComponent(inquiry.email)}?subject=${encodeURIComponent(inquiry.subject)}`
+    : "";
   return (
     <>
       <BackLink to="/admin/consultas">Volver a consultas</BackLink>
@@ -904,19 +930,31 @@ export function InquiryDetailPage() {
                 title={inquiry.subject}
                 description={date(inquiry.createdAt)}
                 action={
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      mutation.clearError();
-                      setConfirm(true);
-                    }}
-                  >
-                    <Trash2 size={17} />
-                    Eliminar consulta
-                  </Button>
+                  <div className={s.actions}>
+                    <a
+                      className={`${s.button} ${s.secondary}`}
+                      href={replyHref}
+                    >
+                      <Mail size={17} />
+                      Responder
+                    </a>
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        mutation.clearError();
+                        setConfirm(true);
+                      }}
+                    >
+                      <Trash2 size={17} />
+                      Eliminar consulta
+                    </Button>
+                  </div>
                 }
               />
               {message && <Notice tone="success">{message}</Notice>}
+              {feedbackMessage && (
+                <Notice tone="success">{feedbackMessage}</Notice>
+              )}
               {mutation.error && !confirm && (
                 <Notice>{mutation.error.message}</Notice>
               )}
@@ -970,9 +1008,43 @@ export function InquiryDetailPage() {
                     }
                   </Form>
                   <p className={s.formHint}>
-                    Cambiar el estado no envía un correo. La respuesta se
-                    coordina por fuera de la aplicación.
+                    Cambiar el estado no envía un correo. Usá “Responder” para
+                    abrir tu cliente de correo con el asunto de la consulta.
                   </p>
+                  <div className={s.inquiryFeedback}>
+                    <h2>Feedback del usuario</h2>
+                    <p className={s.muted}>
+                      Registrá si respondió y qué contestó: quiere avanzar, no
+                      quiere, no respondió, etc.
+                    </p>
+                    <Form
+                      key={`feedback-${inquiry.id}`}
+                      initialValues={{ feedback: inquiry.feedback || "" }}
+                      schema={{ feedback: { max: 2000 } }}
+                      pending={feedbackMutation.pending}
+                      error={feedbackMutation.error}
+                      submitLabel="Guardar feedback"
+                      onSubmit={(values) =>
+                        feedbackMutation.run(async () => {
+                          await api(`/inquiries/${id}/feedback`, {
+                            method: "PATCH",
+                            authenticated: true,
+                            body: { feedback: values.feedback || null },
+                          });
+                          setFeedbackMessage("Feedback guardado.");
+                          resource.reload();
+                        })
+                      }
+                    >
+                      {({ field }) =>
+                        field("feedback", "Comentario de seguimiento", {
+                          multiline: true,
+                          rows: 4,
+                          hint: "Opcional. Se guarda junto a la consulta para futuras referencias.",
+                        })
+                      }
+                    </Form>
+                  </div>
                 </aside>
               </div>
             </>

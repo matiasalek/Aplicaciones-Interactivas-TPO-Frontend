@@ -1848,6 +1848,17 @@
 .inquiryLayout .formHint {
   margin-top: 20px;
 }
+.inquiryFeedback {
+  border-top: 1px solid #e6ebdd;
+  margin-top: 26px;
+  padding-top: 26px;
+}
+.inquiryFeedback h2 {
+  font-size: 16px;
+}
+.inquiryFeedback .muted {
+  margin-bottom: 18px;
+}
 .profileRecovery {
   border-top: 1px solid #e6ebdd;
   margin-top: 28px;
