@@ -784,6 +784,25 @@ export function CategoryEditorPage({ create = false }) {
   );
 }
 
+function inquiryReplyHref({ email, subject }) {
+  const recipient = encodeURIComponent(email).replace("%40", "@");
+  const replySubject = subject.replace(/[\r\n]+/g, " ");
+  return `mailto:${recipient}?subject=${encodeURIComponent(replySubject)}`;
+}
+
+const inquiryFeedbackSchema = {
+  feedback: {
+    check(value) {
+      if (!value.isWellFormed() || value.includes("\0")) {
+        return "El comentario contiene caracteres no válidos.";
+      }
+      if ([...value].length > 2000) {
+        return "Usá hasta 2000 caracteres.";
+      }
+    },
+  },
+};
+
 export function InquiriesPage() {
   const [params, setParams] = useSearchParams();
   const status = Object.hasOwn(inquiryStates, params.get("status"))
@@ -851,11 +870,7 @@ export function InquiriesPage() {
                     </td>
                     <td className={s.descriptionCell}>
                       {inquiry.feedback ? (
-                        <span title={inquiry.feedback}>
-                          {inquiry.feedback.length > 80
-                            ? `${inquiry.feedback.slice(0, 80)}…`
-                            : inquiry.feedback}
-                        </span>
+                        <span title={inquiry.feedback}>{inquiry.feedback}</span>
                       ) : (
                         "Sin feedback"
                       )}
@@ -864,7 +879,7 @@ export function InquiriesPage() {
                       <div className={s.tableActions}>
                         <a
                           className={s.iconButton}
-                          href={`mailto:${encodeURIComponent(inquiry.email)}?subject=${encodeURIComponent(inquiry.subject)}`}
+                          href={inquiryReplyHref(inquiry)}
                           aria-label={`Responder ${inquiry.subject}`}
                         >
                           <Mail size={17} />
@@ -902,20 +917,23 @@ export function InquiriesPage() {
 
 export function InquiryDetailPage() {
   const { id } = useParams();
+  return <InquiryDetail key={id} id={id} />;
+}
+
+function InquiryDetail({ id }) {
   const valid = /^[1-9]\d*$/.test(id);
   const resource = useResource(valid ? `/inquiries/${id}` : null, {
     authenticated: true,
   });
-  const mutation = useMutation();
+  const statusMutation = useMutation();
   const feedbackMutation = useMutation();
+  const deleteMutation = useMutation();
   const navigate = useNavigate();
   const [confirm, setConfirm] = useState(false);
-  const [message, setMessage] = useState("");
+  const [statusMessage, setStatusMessage] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const inquiry = resource.data?.data;
-  const replyHref = inquiry
-    ? `mailto:${encodeURIComponent(inquiry.email)}?subject=${encodeURIComponent(inquiry.subject)}`
-    : "";
+  const replyHref = inquiry ? inquiryReplyHref(inquiry) : "";
   return (
     <>
       <BackLink to="/admin/consultas">Volver a consultas</BackLink>
@@ -940,8 +958,11 @@ export function InquiryDetailPage() {
                     </a>
                     <Button
                       variant="secondary"
+                      disabled={
+                        statusMutation.pending || feedbackMutation.pending
+                      }
                       onClick={() => {
-                        mutation.clearError();
+                        deleteMutation.clearError();
                         setConfirm(true);
                       }}
                     >
@@ -951,22 +972,13 @@ export function InquiryDetailPage() {
                   </div>
                 }
               />
-              {message && <Notice tone="success">{message}</Notice>}
-              {feedbackMessage && (
-                <Notice tone="success">{feedbackMessage}</Notice>
-              )}
-              {mutation.error && !confirm && (
-                <Notice>{mutation.error.message}</Notice>
-              )}
               <div className={s.inquiryLayout}>
                 <article className={s.messagePanel}>
                   <div className={s.sender}>
                     <span className={s.avatar}>{inquiry.name[0]}</span>
                     <div>
                       <h2>{inquiry.name}</h2>
-                      <a href={`mailto:${encodeURIComponent(inquiry.email)}`}>
-                        {inquiry.email}
-                      </a>
+                      <a href={replyHref}>{inquiry.email}</a>
                       {inquiry.phone && <p>{inquiry.phone}</p>}
                     </div>
                   </div>
@@ -977,6 +989,9 @@ export function InquiryDetailPage() {
                   <p className={s.muted}>
                     Marcala según el seguimiento que le diste.
                   </p>
+                  {statusMessage && (
+                    <Notice tone="success">{statusMessage}</Notice>
+                  )}
                   <Form
                     initialValues={{ status: inquiry.status }}
                     schema={{
@@ -985,17 +1000,19 @@ export function InquiryDetailPage() {
                         oneOf: Object.keys(inquiryStates),
                       },
                     }}
-                    pending={mutation.pending}
+                    pending={statusMutation.pending}
+                    error={statusMutation.error}
                     submitLabel="Actualizar estado"
-                    onSubmit={(values) =>
-                      mutation.run(async () => {
-                        await api(`/inquiries/${id}/status`, {
+                    onSubmit={(values, reset) =>
+                      statusMutation.run(async () => {
+                        setStatusMessage("");
+                        const { data } = await api(`/inquiries/${id}/status`, {
                           method: "PATCH",
                           authenticated: true,
                           body: values,
                         });
-                        setMessage("Estado de la consulta actualizado.");
-                        resource.reload();
+                        reset({ status: data.status });
+                        setStatusMessage("Estado de la consulta actualizado.");
                       })
                     }
                   >
@@ -1014,25 +1031,35 @@ export function InquiryDetailPage() {
                   <div className={s.inquiryFeedback}>
                     <h2>Feedback del usuario</h2>
                     <p className={s.muted}>
-                      Registrá si respondió y qué contestó: quiere avanzar, no
-                      quiere, no respondió, etc.
+                      Registrá el seguimiento de la consulta en un comentario
+                      interno.
                     </p>
+                    {feedbackMessage && (
+                      <Notice tone="success">{feedbackMessage}</Notice>
+                    )}
                     <Form
-                      key={`feedback-${inquiry.id}`}
-                      initialValues={{ feedback: inquiry.feedback || "" }}
-                      schema={{ feedback: { max: 2000 } }}
+                      initialValues={{ feedback: inquiry.feedback ?? "" }}
+                      schema={inquiryFeedbackSchema}
                       pending={feedbackMutation.pending}
                       error={feedbackMutation.error}
                       submitLabel="Guardar feedback"
-                      onSubmit={(values) =>
+                      onSubmit={(values, reset) =>
                         feedbackMutation.run(async () => {
-                          await api(`/inquiries/${id}/feedback`, {
-                            method: "PATCH",
-                            authenticated: true,
-                            body: { feedback: values.feedback || null },
-                          });
-                          setFeedbackMessage("Feedback guardado.");
-                          resource.reload();
+                          setFeedbackMessage("");
+                          const { data } = await api(
+                            `/inquiries/${id}/feedback`,
+                            {
+                              method: "PATCH",
+                              authenticated: true,
+                              body: { feedback: values.feedback || null },
+                            },
+                          );
+                          reset({ feedback: data.feedback ?? "" });
+                          setFeedbackMessage(
+                            data.feedback === null
+                              ? "Feedback borrado."
+                              : "Feedback guardado.",
+                          );
                         })
                       }
                     >
@@ -1040,7 +1067,7 @@ export function InquiryDetailPage() {
                         field("feedback", "Comentario de seguimiento", {
                           multiline: true,
                           rows: 4,
-                          hint: "Opcional. Se guarda junto a la consulta para futuras referencias.",
+                          hint: "Hasta 2000 caracteres. Para borrar el feedback, dejá el campo vacío y guardá.",
                         })
                       }
                     </Form>
@@ -1054,11 +1081,11 @@ export function InquiryDetailPage() {
       {confirm && (
         <ConfirmDialog
           title="¿Eliminar esta consulta?"
-          pending={mutation.pending}
-          error={mutation.error}
+          pending={deleteMutation.pending}
+          error={deleteMutation.error}
           onClose={() => setConfirm(false)}
           onConfirm={() =>
-            mutation.run(async () => {
+            deleteMutation.run(async () => {
               await api(`/inquiries/${id}`, {
                 method: "DELETE",
                 authenticated: true,

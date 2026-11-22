@@ -1672,6 +1672,13 @@
   font-size: 11px;
   color: #59694d;
 }
+.descriptionCell span {
+  display: block;
+  max-width: 24ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .tableActions {
   display: flex;
   gap: 7px;
@@ -1852,9 +1859,6 @@
   border-top: 1px solid #e6ebdd;
   margin-top: 26px;
   padding-top: 26px;
-}
-.inquiryFeedback h2 {
-  font-size: 16px;
 }
 .inquiryFeedback .muted {
   margin-bottom: 18px;

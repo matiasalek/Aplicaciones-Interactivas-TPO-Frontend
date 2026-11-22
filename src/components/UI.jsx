@@ -202,8 +202,8 @@ export function Form({
       formRef.current.elements.namedItem(first)?.focus();
       return;
     }
-    await onSubmit(clean(values), () => {
-      setValues(initialValues);
+    await onSubmit(clean(values), (nextValues = initialValues) => {
+      setValues(nextValues);
       setErrors({});
     });
   }
@@ -214,7 +214,9 @@ export function Form({
       onSubmit={submit}
       className={`${s.form} ${className}`}
     >
-      <p className={s.formHint}>Los campos con * son obligatorios.</p>
+      {Object.values(schema).some((rule) => rule.required) && (
+        <p className={s.formHint}>Los campos con * son obligatorios.</p>
+      )}
       <fieldset disabled={pending} className={s.fieldset}>
         {children({ field, values, setValues, errors, setErrors })}
       </fieldset>
